@@ -1,6 +1,6 @@
 .category-card-button {
   border: none;
-  background-color:  #fff4f4;/* #b52020; */
+  background-color: #fff4f4;
   color: #000;
   font-family: Dotgothic16;
   font-size: 1.2rem;
@@ -23,13 +23,13 @@
 .category-container {
   list-style: none;
   min-height: 100vh;
-  align-items: center;
   width: 100%;
   max-width: 400px;
   margin: 0 auto;
   margin-top: 5rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -41,4 +41,21 @@
   display: flex;
   justify-content: center;
   margin-top: 10rem;
+}
+
+@media (min-width: 768px) {
+  .category-card-button {
+    font-size: 1.7rem;
+    width: 45rem;
+    height: 6rem;
+  }
+
+  .category-container {
+    gap: 1.5rem;
+  }
+
+  .category-title {
+    font-size: 5rem;
+    margin-top: 5rem;
+  }
 }
