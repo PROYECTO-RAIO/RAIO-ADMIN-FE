@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import CategoryCard from "../components/card/CategoryCard";
+import filterIcon from '../assets/lupa.png'
 
 function CategoryPage() {
     const navigate = useNavigate();
@@ -16,6 +17,11 @@ function CategoryPage() {
 
     return (
         <section aria-labelledby="category-title">
+            <img
+                src={filterIcon}
+                alt="Filtrar categorías"
+                className="filter-icon"
+            />
             <h1 className="category-title">CATEGORÍAS</h1>
             <ul className="category-container">
                 <li key="create">
