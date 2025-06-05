@@ -1,5 +1,4 @@
 import './Home.css';
-import BasicButton from "../components/BasicButton";
 
 function Home() {
     return(
