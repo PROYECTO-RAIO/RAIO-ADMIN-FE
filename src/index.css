@@ -1,8 +1,13 @@
+body {
+  background-color: black;
+  background-image: url('/src/assets/ruido.jpg');
+  background-repeat: repeat;
+}
+
 ul {
   margin: 0;
   padding: 0;
 }
-
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
