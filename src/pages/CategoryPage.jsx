@@ -7,13 +7,23 @@ function CategoryPage() {
     const categories = ['haiku', 'sonoras', 'bot'];
 
     const handleCategoryClick = (categoryName) => {
-        navigate(`/view/${categoryName}`);
+        navigate(`/ver/${categoryName}`);
     };
+
+    const handleCreateClick = () => {
+        navigate('/crear');
+    }
 
     return (
         <section aria-labelledby="category-title">
             <h1 className="category-title">CATEGORÍAS</h1>
             <ul className="category-container">
+                <li key="create">
+                    <CategoryCard
+                        name="añadir categoría"
+                        onClick={handleCreateClick}
+                    />
+                </li>
                 {categories.map(category => (
                     <li key={category}>
                         <CategoryCard
@@ -26,6 +36,5 @@ function CategoryPage() {
         </section>
     )
 }
-
 
 export default CategoryPage;
