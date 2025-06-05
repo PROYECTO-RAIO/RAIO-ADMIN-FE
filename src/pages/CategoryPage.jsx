@@ -11,9 +11,9 @@ function CategoryPage() {
     };
 
     return (
-        <section aria-labelledby="categorias-titulo">
-            <h1 id="categorias-titulo">Categorías</h1>
-            <ul className="categories-container">
+        <section aria-labelledby="category-title">
+            <h1 className="category-title">Categorías</h1>
+            <ul className="category-container">
                 {categories.map(category => (
                     <li key={category}>
                         <CategoryCard
