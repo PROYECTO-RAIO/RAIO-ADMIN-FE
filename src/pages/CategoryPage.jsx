@@ -12,7 +12,7 @@ function CategoryPage() {
 
     return (
         <section aria-labelledby="category-title">
-            <h1 className="category-title">Categorías</h1>
+            <h1 className="category-title">CATEGORÍAS</h1>
             <ul className="category-container">
                 {categories.map(category => (
                     <li key={category}>
