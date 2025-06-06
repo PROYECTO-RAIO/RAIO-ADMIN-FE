@@ -2,3 +2,29 @@
     justify-self: center;
     font-family: Dotgothic16;
 }
+
+.category-sub-container {
+    background-color: #FFF4F4;
+    max-height: 6rem;
+    width: 20rem;
+    justify-self: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 0.8rem;
+    margin-bottom: 2rem;
+}
+
+.category-sub {
+    font-family: Dotgothic16;
+    justify-self: center;
+}
+
+@media (min-width: 768px) {
+  .category-sub-container {
+    font-size: 1.7rem;
+    width: 45rem;
+    height: 6rem;
+  }
+}
+
+

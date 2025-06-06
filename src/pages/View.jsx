@@ -16,6 +16,9 @@ function View() {
         <>
         <Header />
         <h1 className="category-header">{category.toUpperCase()}</h1>
+        <div className="category-sub-container">
+            <h4 className="category-sub">elige cualquier reverberación para ver su contenido.</h4>
+            </div>
             <section className="view-reverbs">
                 {reverbs.length > 0 ? (
                 reverbs.map((rev, idx) => (
