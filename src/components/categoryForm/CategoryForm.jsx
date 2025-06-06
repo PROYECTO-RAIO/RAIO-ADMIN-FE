@@ -2,14 +2,18 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Alert, Spinner } from 'react-bootstrap';
 import BasicButton from '../basicButton/BasicButton';
+import './CategoryForm.css';
 
 const defaultData = {
   nombre: '',
+  descripcion: '',
+  autor: '',
   email_autor: '',
   frecuencia_num: 1,
   frecuencia_unidad: 'hora',
   limitado: false,
   total_reverberaciones: 0,
+  activo: true,
   fecha_inicio: '',
   fecha_final: '',
   lista_correo_url: '',
@@ -48,6 +52,10 @@ function CategoriaForm({ initialData = null }) {
 
     if (!formData.nombre.trim()) newErrors.nombre = 'El nombre es obligatorio';
 
+    if (formData.nombre.length > 100) {
+      newErrors.nombre = 'El nombre es demasiado largo';
+    }
+
     if (!/^\S+@\S+\.\S+$/.test(formData.email_autor))
       newErrors.email_autor = 'Email no válido';
 
@@ -57,6 +65,10 @@ function CategoriaForm({ initialData = null }) {
     if (Number(formData.total_reverberaciones) < 0)
       newErrors.total_reverberaciones = 'Debe ser un número mayor o igual a 0';
 
+    if (typeof formData.activo !== 'boolean') {
+      newErrors.activo = 'Debes seleccionar si está activo o inactivo';
+    }
+
     const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
     if (formData.lista_correo_url && !urlRegex.test(formData.lista_correo_url))
       newErrors.lista_correo_url = 'URL no válida';
@@ -64,18 +76,35 @@ function CategoriaForm({ initialData = null }) {
     if (formData.archivo_url && !urlRegex.test(formData.archivo_url))
       newErrors.archivo_url = 'URL no válida';
 
-    if (formData.fecha_inicio && formData.fecha_final) {
-      if (new Date(formData.fecha_final) < new Date(formData.fecha_inicio))
-        newErrors.fecha_final = 'La fecha final debe ser igual o posterior a la fecha de inicio';
-    }
-
     if (formData.demora && Number(formData.periodo_retraso_num) < 0)
       newErrors.periodo_retraso_num = 'Debe ser un número mayor o igual a 0';
+
+    if (!Number.isInteger(Number(formData.frecuencia_num))) {
+      newErrors.frecuencia_num = 'Debe ser un número entero';
+    }
+
+    if (formData.fecha_inicio && isNaN(new Date(formData.fecha_inicio).getTime())) {
+      newErrors.fecha_inicio = 'Fecha de inicio no válida';
+    }
+    if (formData.fecha_final && isNaN(new Date(formData.fecha_final).getTime())) {
+      newErrors.fecha_final = 'Fecha final no válida';
+    }
+    if (
+      formData.fecha_inicio &&
+      formData.fecha_final &&
+      !isNaN(new Date(formData.fecha_inicio).getTime()) &&
+      !isNaN(new Date(formData.fecha_final).getTime()) &&
+      new Date(formData.fecha_final) < new Date(formData.fecha_inicio)
+    ) {
+      newErrors.fecha_final = 'La fecha final debe ser igual o posterior a la fecha de inicio';
+    }
+
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
@@ -100,11 +129,11 @@ function CategoriaForm({ initialData = null }) {
   const isEditMode = Boolean(initialData);
 
   return (
-    <Form onSubmit={handleSubmit} noValidate>
+    <Form className="custom-form" onSubmit={handleSubmit} noValidate>
       {submitError && <Alert variant="danger">{submitError}</Alert>}
 
       <Form.Group className="mb-3" controlId="nombre">
-        <Form.Label>Nombre de la categoría</Form.Label>
+        <Form.Label>Nombre de la categoría:</Form.Label>
         <Form.Control
           type="text"
           name="nombre"
@@ -115,8 +144,32 @@ function CategoriaForm({ initialData = null }) {
         <Form.Control.Feedback type="invalid">{errors.nombre}</Form.Control.Feedback>
       </Form.Group>
 
+      <Form.Group className="mb-3" controlId="descripción">
+        <Form.Label>Descripción de la categoría:</Form.Label>
+        <Form.Control
+          type="text"
+          name="descripción"
+          value={formData.descripcion}
+          onChange={handleChange}
+          isInvalid={!!errors.descripcion}
+        />
+        <Form.Control.Feedback type="invalid">{errors.descripcion}</Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="autor">
+        <Form.Label>Autor de la categoría:</Form.Label>
+        <Form.Control
+          type="text"
+          name="autor"
+          value={formData.nombre}
+          onChange={handleChange}
+          isInvalid={!!errors.autor}
+        />
+        <Form.Control.Feedback type="invalid">{errors.autor}</Form.Control.Feedback>
+      </Form.Group>
+
       <Form.Group className="mb-3" controlId="email_autor">
-        <Form.Label>Email del autor</Form.Label>
+        <Form.Label>Email del autor:</Form.Label>
         <Form.Control
           type="email"
           name="email_autor"
@@ -127,8 +180,8 @@ function CategoriaForm({ initialData = null }) {
         <Form.Control.Feedback type="invalid">{errors.email_autor}</Form.Control.Feedback>
       </Form.Group>
 
-       <Form.Group className="mb-3" controlId="frecuencia">
-        <Form.Label>Frecuencia</Form.Label>
+      <Form.Group className="mb-3" controlId="frecuencia">
+        <Form.Label>Frecuencia:</Form.Label>
         <div className="d-flex gap-2">
           <Form.Control
             type="number"
@@ -164,21 +217,47 @@ function CategoriaForm({ initialData = null }) {
         />
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="total_reverberaciones">
-        <Form.Label>Total reverberaciones</Form.Label>
-        <Form.Control
-          type="number"
-          min="0"
-          name="total_reverberaciones"
-          value={formData.total_reverberaciones}
-          onChange={handleChange}
-          isInvalid={!!errors.total_reverberaciones}
-        />
-        <Form.Control.Feedback type="invalid">{errors.total_reverberaciones}</Form.Control.Feedback>
+      {formData.limitado && (
+        <Form.Group className="mb-3" controlId="total_reverberaciones">
+          <Form.Label>Total reverberaciones:</Form.Label>
+          <Form.Control
+            type="number"
+            min="0"
+            name="total_reverberaciones"
+            value={formData.total_reverberaciones}
+            onChange={handleChange}
+            isInvalid={!!errors.total_reverberaciones}
+          />
+          <Form.Control.Feedback type="invalid">{errors.total_reverberaciones}</Form.Control.Feedback>
+        </Form.Group>
+      )}
+
+      <Form.Group className="mb-3" controlId="activo">
+        <Form.Label>Estado:</Form.Label>
+        <div>
+          <Form.Check
+            inline
+            type="radio"
+            label="Activo"
+            name="activo"
+            value="true"
+            checked={formData.activo === true}
+            onChange={() => setFormData({ ...formData, activo: true })}
+          />
+          <Form.Check
+            inline
+            type="radio"
+            label="Inactivo"
+            name="activo"
+            value="false"
+            checked={formData.activo === false}
+            onChange={() => setFormData({ ...formData, activo: false })}
+          />
+        </div>
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="fecha_inicio">
-        <Form.Label>Fecha de inicio</Form.Label>
+        <Form.Label>Fecha de inicio:</Form.Label>
         <Form.Control
           type="date"
           name="fecha_inicio"
@@ -190,7 +269,7 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="fecha_final">
-        <Form.Label>Fecha final</Form.Label>
+        <Form.Label>Fecha final:</Form.Label>
         <Form.Control
           type="date"
           name="fecha_final"
@@ -202,7 +281,7 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="lista_correo_url">
-        <Form.Label>Lista de correo (URL)</Form.Label>
+        <Form.Label>Lista de correo (URL):</Form.Label>
         <Form.Control
           type="url"
           name="lista_correo_url"
@@ -214,7 +293,7 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="archivo_url">
-        <Form.Label>Link del archivo (URL)</Form.Label>
+        <Form.Label>Link del archivo (URL):</Form.Label>
         <Form.Control
           type="url"
           name="archivo_url"
@@ -237,7 +316,7 @@ function CategoriaForm({ initialData = null }) {
 
       {formData.demora && (
         <Form.Group className="mb-3" controlId="periodo_retraso">
-          <Form.Label>Periodo de retraso</Form.Label>
+          <Form.Label>Periodo de retraso:</Form.Label>
           <div className="d-flex gap-2">
             <Form.Control
               type="number"
@@ -266,12 +345,11 @@ function CategoriaForm({ initialData = null }) {
       <BasicButton type="submit" className="btn-accent-custom mt-3" disabled={loading}>
         {loading ? (
           <>
-            <Spinner animation="border" size="sm" /> Guardando...
+            <Spinner animation="border" size="sm" className="me-2" />
+            Guardando...
           </>
-        ) : isEditMode ? (
-          'Guardar Cambios'
         ) : (
-          'Crear Categoría'
+          isEditMode ? 'Guardar Cambios' : 'Crear Categoría'
         )}
       </BasicButton>
     </Form>
