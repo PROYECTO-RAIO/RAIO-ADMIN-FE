@@ -1,0 +1,18 @@
+.custom-form{
+    background-color: #D9D9D9;
+    border-radius: 0.8rem;
+    padding: 3rem;
+    margin-top: 1.5rem; 
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+@media (min-width: 768px) {
+
+    .custom-form{
+    padding: 3.5rem;
+    margin-left: 8rem;
+    margin-right: 8rem;
+
+    }
+}

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import CategoryCard from "../components/card/CategoryCard";
 import filterIcon from '../assets/lupa.png'
+import './CategoryPage.css'
 
 function CategoryPage() {
     const navigate = useNavigate();

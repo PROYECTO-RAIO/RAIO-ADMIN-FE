@@ -3,6 +3,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import BasicButton from '../basicButton/BasicButton';
 
+import BasicButton from '../basicButton/BasicButton';
 import { Link } from "react-router-dom";
 
 function BackButton(){
