@@ -1,8 +1,9 @@
 import LoginForm from "../components/loginForm/LoginForm"
+import  "./Home.css"
 function Home() {
     return(
         <>
-        <h1> REVERBERACIONS </h1>
+        <h1 className="title"> REVERBERACIONS </h1>
         <LoginForm/>
         </>
     )
