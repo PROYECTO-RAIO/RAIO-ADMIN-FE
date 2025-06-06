@@ -1,7 +1,9 @@
+import './Create.css';
+
 function Create() {
     return(
         <>
-        <h1>Crear categorías</h1>
+        <h1>NUEVA CATEGORÍA</h1>
         </>
     )
 }
