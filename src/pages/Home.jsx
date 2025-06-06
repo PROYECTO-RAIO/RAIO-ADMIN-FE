@@ -1,9 +1,9 @@
-import './Home.css';
-
+import LoginForm from "../components/loginForm/LoginForm"
 function Home() {
     return(
         <>
-        <h1>Inicio (eventual login)</h1>
+        <h1> REVERBERACIONS </h1>
+        <LoginForm/>
         </>
     )
 }
