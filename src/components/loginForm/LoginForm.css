@@ -1,0 +1,74 @@
+.form-container{
+    display: flex;
+    height: 50vh;
+    width: 50vh;
+    background-color: #D9D9D9;
+    border-radius: 10px;
+    justify-content: center;
+     margin: 7rem auto 0 auto;
+}
+.form-content{
+    margin-top: 2.5rem;
+    width: 100%;
+}
+
+.email-input{
+     background-color: #1F3BE9;
+     width: 40vh;
+     border-radius: 0.8rem;
+     color:#D9D9D9;
+}
+
+.password-input{
+    background-color: #10F419;
+    width: 40vh;
+    border-radius: 0.8rem;
+    color:#D9D9D9;
+}
+
+.btn-secondary-custom{
+    display: flex;
+    border: none;
+    justify-self: center;
+    justify-content: center;
+    margin-top:5vh;
+}
+
+.email-input::placeholder {
+  color: #ffffff; 
+}
+
+.password-input::placeholder {
+  color: #ffffff; 
+}
+
+/* 📱 Mobile: hasta 767px (~375x667) */
+@media (max-width: 47.9375em) {
+  .form-container {
+    margin-top: 4rem;
+    padding: 1.5rem;
+    width: 90%;
+  }
+
+  .btn-secondary-custom {
+    margin-top: 1.5rem;
+  }
+}
+
+/* 💊 Tablet: 768px - 1023px */
+@media (min-width: 48em) and (max-width: 63.9375em) {
+  .form-container {
+    width: 80%;
+    max-width: 35rem;
+    padding: 2rem;
+  }
+}
+
+/* 💻 Desktop: desde 1024px */
+@media (min-width: 64em) {
+  .form-container {
+    width: 50%;
+    max-width: 40rem;
+    padding: 3rem;
+  }
+}
