@@ -1,4 +1,6 @@
+import CategoriaForm from '../components/categoryForm/CategoryForm';
 import './Create.css';
+
 
 function Create() {
     return(
