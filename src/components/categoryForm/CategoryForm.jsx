@@ -19,7 +19,7 @@ const defaultData = {
   periodo_retraso_unidad: 'minuto',
 };
 
-function CategoriaForm({ initialData = null, onSubmit }) {
+function CategoriaForm({ initialData = null }) {
   const [formData, setFormData] = useState(defaultData);
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState(null);

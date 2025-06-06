@@ -6,6 +6,7 @@ function Create() {
     return(
         <>
         <h1>NUEVA CATEGORÍA</h1>
+        <CategoriaForm />
         </>
     )
 }
