@@ -1,4 +1,4 @@
-import Button from '../BasicButton';
+import Button from '../basicButton/BasicButton';
 import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
 import "./LoginForm.css";
