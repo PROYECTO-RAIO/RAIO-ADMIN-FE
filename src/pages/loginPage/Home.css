@@ -1,7 +1,17 @@
 .title{
-    display: flex;
-    justify-self: center;
-    padding: 3rem;  
-    margin-top: 5rem;
-    
+  font-family: Dotgothic16;
+  font-size: 2.5rem;
+  font-weight: normal;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  margin-top: 8rem;
+}
+
+@media (min-width: 768px) {
+  .title{
+    font-size: 4rem;
+    margin-top: 6.5rem;
+  }
+
 }
