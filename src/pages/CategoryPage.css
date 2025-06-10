@@ -1,0 +1,71 @@
+.category-title {
+    font-family: Dotgothic16;
+    font-size: 2.4rem;
+    font-weight: normal;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 10rem;
+}
+
+.category-container {
+    list-style: none;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.edit-icon {
+    position: fixed;
+    top: 1.5rem;
+    right: 5rem;
+    margin-right: 1rem;
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.filter-icon {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+@media (min-width: 768px) {
+
+    .category-title {
+        font-size: 5.5rem;
+        margin-top: 6.5rem;
+    }
+
+    .category-container {
+        gap: 1.5rem;
+    }
+
+    .edit-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        margin-right: 2rem;
+        top: 2rem;
+        right: 6rem;
+    }
+
+    .filter-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        top: 2rem;
+        right: 3rem;
+    }
+}

@@ -1,6 +1,8 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import CategoryCard from "../components/card/CategoryCard";
-import filterIcon from '../assets/lupa.png'
+import filterIcon from '../assets/lupa.png';
+import editIcon from '../assets/lapiz.png';
+import './CategoryPage.css'
 
 function CategoryPage() {
     const navigate = useNavigate();
@@ -17,6 +19,13 @@ function CategoryPage() {
 
     return (
         <section aria-labelledby="category-title">
+            <Link to="/editar">
+                <img
+                    src={editIcon}
+                    alt="Editar categorías"
+                    className="edit-icon"
+                />
+            </Link>
             <img
                 src={filterIcon}
                 alt="Filtrar categorías"

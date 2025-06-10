@@ -23,7 +23,7 @@ const currentPath = location.pathname;
                 editar
             </BasicButton>
             <BasicButton 
-                className={`btn-primary-custom ${currentPath === '/ver' ? 'btn-accent-custom' : ''}`}
+                className={`btn-primary-custom ${currentPath.startsWith('/ver') ? 'btn-accent-custom' : ''}`}
                 as={Link} 
                 to="/ver">
                 ver
