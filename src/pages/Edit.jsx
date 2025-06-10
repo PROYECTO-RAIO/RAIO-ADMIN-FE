@@ -25,7 +25,7 @@ function Edit() {
     return(
         <>
         <Header />
-        <h1>Editar categorías</h1>
+        <h1>EDITAR CATEGORÍA</h1>
         <CategoryForm initialData={ejemploData}/>
         </>
     )
