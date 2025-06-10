@@ -12,7 +12,9 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@testing-library/react": "^16.3.0",
     "bootstrap": "^5.3.6",
+    "jsdom": "^26.1.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@playwright/test": "^1.52.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@types/node": "^22.15.29",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",

@@ -8,6 +8,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    exclude: [...configDefaults.exclude, 'e2e/**']
+    exclude: [...configDefaults.exclude, '**/tests/e2e/**'],
+    setupFiles: './tests/unit/setupTests.jsx',
+    testMatch: ['src/components/**/*test.jsx'],
   },
 })
