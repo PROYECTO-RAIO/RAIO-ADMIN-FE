@@ -134,7 +134,7 @@ function CategoriaForm({ initialData = null }) {
 
       <Form.Group className="mb-3" controlId="nombre">
         <Form.Label>Nombre de la categoría:</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="text"
           name="nombre"
           value={formData.nombre}
@@ -144,11 +144,11 @@ function CategoriaForm({ initialData = null }) {
         <Form.Control.Feedback type="invalid">{errors.nombre}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="descripción">
+      <Form.Group className="mb-3" controlId="descripcion">
         <Form.Label>Descripción de la categoría:</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="text"
-          name="descripción"
+          name="descripcion"
           value={formData.descripcion}
           onChange={handleChange}
           isInvalid={!!errors.descripcion}
@@ -158,10 +158,10 @@ function CategoriaForm({ initialData = null }) {
 
       <Form.Group className="mb-3" controlId="autor">
         <Form.Label>Autor de la categoría:</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="text"
           name="autor"
-          value={formData.nombre}
+          value={formData.autor}
           onChange={handleChange}
           isInvalid={!!errors.autor}
         />
@@ -170,7 +170,7 @@ function CategoriaForm({ initialData = null }) {
 
       <Form.Group className="mb-3" controlId="email_autor">
         <Form.Label>Email del autor:</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="email"
           name="email_autor"
           value={formData.email_autor}
@@ -183,7 +183,7 @@ function CategoriaForm({ initialData = null }) {
       <Form.Group className="mb-3" controlId="frecuencia">
         <Form.Label>Frecuencia:</Form.Label>
         <div className="d-flex gap-2">
-          <Form.Control
+          <Form.Control className="input"
             type="number"
             min="1"
             name="frecuencia_num"
@@ -220,7 +220,7 @@ function CategoriaForm({ initialData = null }) {
       {formData.limitado && (
         <Form.Group className="mb-3" controlId="total_reverberaciones">
           <Form.Label>Total reverberaciones:</Form.Label>
-          <Form.Control
+          <Form.Control className="input"
             type="number"
             min="0"
             name="total_reverberaciones"
@@ -258,7 +258,7 @@ function CategoriaForm({ initialData = null }) {
 
       <Form.Group className="mb-3" controlId="fecha_inicio">
         <Form.Label>Fecha de inicio:</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="date"
           name="fecha_inicio"
           value={formData.fecha_inicio}
@@ -270,7 +270,7 @@ function CategoriaForm({ initialData = null }) {
 
       <Form.Group className="mb-3" controlId="fecha_final">
         <Form.Label>Fecha final:</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="date"
           name="fecha_final"
           value={formData.fecha_final}
@@ -282,7 +282,7 @@ function CategoriaForm({ initialData = null }) {
 
       <Form.Group className="mb-3" controlId="lista_correo_url">
         <Form.Label>Lista de correo (URL):</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="url"
           name="lista_correo_url"
           value={formData.lista_correo_url}
@@ -294,7 +294,7 @@ function CategoriaForm({ initialData = null }) {
 
       <Form.Group className="mb-3" controlId="archivo_url">
         <Form.Label>Link del archivo (URL):</Form.Label>
-        <Form.Control
+        <Form.Control className="input"
           type="url"
           name="archivo_url"
           value={formData.archivo_url}
@@ -318,7 +318,7 @@ function CategoriaForm({ initialData = null }) {
         <Form.Group className="mb-3" controlId="periodo_retraso">
           <Form.Label>Periodo de retraso:</Form.Label>
           <div className="d-flex gap-2">
-            <Form.Control
+            <Form.Control className="input"
               type="number"
               min="0"
               name="periodo_retraso_num"
