@@ -3,7 +3,7 @@ import Home from "../pages/loginPage/Home";
 import CategoryPage from "../pages/CategoryPage";
 import Create from "../pages/Create";
 import Edit from "../pages/Edit";
-import View from "../pages/View";
+import EditCategory from "../pages/EditCategory";
 
 function Router() {
     return(
@@ -13,8 +13,8 @@ function Router() {
                 <Route path="/categorias" element={<CategoryPage />}/>
                 <Route path="/crear" element={<Create />}/>
                 <Route path="/editar" element={<Edit />}/>
+                <Route path="/editar/:category" element={<EditCategory />} />
                 <Route path="/ver" element={<CategoryPage />}/>
-                <Route path="/ver/:category" element={<View />} />
             </Routes>
         </BrowserRouter>
     )

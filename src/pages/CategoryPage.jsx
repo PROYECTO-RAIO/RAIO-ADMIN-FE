@@ -10,7 +10,7 @@ function CategoryPage() {
     const categories = ['haiku', 'sonoras', 'bot'];
 
     const handleCategoryClick = (categoryName) => {
-        navigate(`/ver/${categoryName}`);
+        navigate(`/editar/${categoryName}`);
     };
 
     const handleCreateClick = () => {
