@@ -7,12 +7,16 @@
     margin-right: 3rem;
 }
 
+.button-container {
+    display: flex;
+    flex-direction: column;
+}
+
 @media (min-width: 768px) {
 
     .custom-form{
     padding: 3.5rem;
     margin-left: 8rem;
     margin-right: 8rem;
-
     }
 }

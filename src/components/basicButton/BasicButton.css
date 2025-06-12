@@ -32,6 +32,10 @@ a:focus {
   background-color: #F4F211;
 }
 
+.btn-tertiary-custom {
+  background-color: #F5672A;
+}
+
 .btn-accent-custom {
   background-color: #10F419;
   text-decoration: underline;
@@ -46,6 +50,7 @@ a:focus {
 
 .btn-small {
   min-width: 5rem;
+  max-width: 12rem;
 }
 
 .btn-large {

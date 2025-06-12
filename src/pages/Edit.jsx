@@ -13,6 +13,11 @@ function Edit() {
         <>
         <Header />
         <ul className="category-container">
+                    <li key="create">
+                        <CategoryCard
+                            name="seleccionar una categoría"
+                    />
+                </li>
                 {categories.map(category => (
                     <li key={category}>
                         <CategoryCard
