@@ -358,7 +358,8 @@ function CategoriaForm({ initialData = null }) {
           <Form.Control.Feedback type="invalid">{errors.periodo_retraso_num}</Form.Control.Feedback>
         </Form.Group>
       )}
-      <BasicButton type="submit" className="btn-accent-custom mt-3" disabled={loading}>
+      <div className="button-container">
+      <BasicButton type="submit" className="btn-accent-custom mt-3" disabled={loading} size="small">
         {loading ? (
           <>
             <Spinner animation="border" size="sm" className="me-2" />
@@ -373,11 +374,13 @@ function CategoriaForm({ initialData = null }) {
         <BasicButton
           type="button"
           className="btn-tertiary-custom"
+          size="small"
           onClick={handleDelete}
           >
           Eliminar categoría
         </BasicButton>
       )}
+      </div>
     </Form>
   );
 }

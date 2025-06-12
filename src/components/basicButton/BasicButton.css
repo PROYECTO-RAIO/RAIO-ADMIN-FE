@@ -50,6 +50,7 @@ a:focus {
 
 .btn-small {
   min-width: 5rem;
+  max-width: 12rem;
 }
 
 .btn-large {
