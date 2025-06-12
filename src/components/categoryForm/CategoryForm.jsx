@@ -99,8 +99,6 @@ function CategoriaForm({ initialData = null }) {
       newErrors.fecha_final = 'La fecha final debe ser igual o posterior a la fecha de inicio';
     }
 
-
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -125,6 +123,24 @@ function CategoriaForm({ initialData = null }) {
       console.error(error);
     }
   };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar esta categoría?');
+    if (!confirmDelete) return;
+
+  try {
+    setLoading(true);
+    //actualizar con datos de Services
+    await deleteCategoria(initialData.id); 
+    alert('Categoría eliminada con éxito');
+    navigate('/categorias');
+  } catch (error) {
+    console.error('Error al eliminar la categoría', error);
+    alert('No se pudo eliminar la categoría');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const isEditMode = Boolean(initialData);
 
@@ -349,9 +365,19 @@ function CategoriaForm({ initialData = null }) {
             Guardando...
           </>
         ) : (
-          isEditMode ? 'Guardar Cambios' : 'Crear Categoría'
+          isEditMode ? 'Guardar cambios' : 'Crear categoría'
         )}
       </BasicButton>
+
+      {isEditMode && (
+        <BasicButton
+          type="button"
+          className="btn-tertiary-custom"
+          onClick={handleDelete}
+          >
+          Eliminar categoría
+        </BasicButton>
+      )}
     </Form>
   );
 }
