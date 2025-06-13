@@ -1,4 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getCategorias } from "./../service/apiService";
 import CategoryCard from "../components/card/CategoryCard";
 import filterIcon from '../assets/lupa.png';
 import editIcon from '../assets/lapiz.png';
@@ -6,11 +8,25 @@ import './CategoryPage.css'
 
 function CategoryPage() {
     const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
 
-    const categories = ['haiku', 'sonoras', 'bot'];
+    // const categories = ['haiku', 'sonoras', 'bot'];
 
-    const handleCategoryClick = (categoryName) => {
-        navigate(`/editar/${categoryName}`);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const data = await getCategorias();
+                setCategories(data);
+            } catch (error) {
+                console.error("Error loading categories:", error);
+            }
+        };
+    
+        fetchCategories();
+    }, []);
+
+    const handleCategoryClick = (id) => {
+        navigate(`/editar/${id}`);
     };
 
     const handleCreateClick = () => {
@@ -40,10 +56,10 @@ function CategoryPage() {
                     />
                 </li>
                 {categories.map(category => (
-                    <li key={category}>
+                    <li key={category.id}>
                         <CategoryCard
-                            name={category}
-                            onClick={() => handleCategoryClick(category)}
+                        name={category.tituloCategoria}
+                        onClick={() => handleCategoryClick(category.id)}
                         />
                     </li>
                 ))}

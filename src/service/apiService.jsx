@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5432/reverberacions/api/v1/categorias';
+const BASE_URL = 'http://localhost:8080/api/v1/categorias';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 
 export const getCategorias = async () => {
   try {
-    const response = await axiosInstance.get('/');
+    const response = await axiosInstance.get('');
     return response.data;
   } catch (error) {
     console.error('Error al obtener categorías:', error.response?.data || error.message);
