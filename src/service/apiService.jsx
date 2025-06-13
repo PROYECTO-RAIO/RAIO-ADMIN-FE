@@ -31,7 +31,7 @@ export const getCategoriaById = async (id) => {
 
 export const createCategoria = async (categoria) => {
   try {
-    const response = await axiosInstance.post('/', categoria);
+    const response = await axiosInstance.post('', categoria);
     return response.data; 
   } catch (error) {
     console.error('Error al crear categoría:', error.response?.data || error.message);
