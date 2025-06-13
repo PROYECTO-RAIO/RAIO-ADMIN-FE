@@ -177,7 +177,7 @@ function CategoriaForm({ initialData = null }) {
         <Form.Control
           type="text"
           name="autor"
-          value={formData.nombre}
+          value={formData.autor}
           onChange={handleChange}
           isInvalid={!!errors.autor}
         />
