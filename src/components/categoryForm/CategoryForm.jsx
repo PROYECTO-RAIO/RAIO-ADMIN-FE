@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Alert, Spinner } from 'react-bootstrap';
 import BasicButton from '../basicButton/BasicButton';
-import { createCategoria, deleteCategoria } from '../../service/apiService';
+import { createCategoria, updateCategoria, deleteCategoria } from '../../service/apiService';
 import './CategoryForm.css';
 
 const defaultData = {

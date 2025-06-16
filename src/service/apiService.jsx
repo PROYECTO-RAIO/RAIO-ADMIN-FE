@@ -41,7 +41,7 @@ export const createCategoria = async (categoria) => {
 
 export const updateCategoria = async (id, categoria) => {
   try {
-    const response = await axiosInstance.put(`/${id}`, categoria);
+    const response = await axiosInstance.put(`/categorias/${id}`, categoria);
     return response.data;
   } catch (error) {
     console.error('Error al actualizar categoría:', error.response?.data || error.message);
@@ -51,7 +51,7 @@ export const updateCategoria = async (id, categoria) => {
 
 export const deleteCategoria = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/${id}`);
+    const response = await axiosInstance.delete(`/categorias/${id}`);
     return response.status === 204;
   } catch (error) {
     console.error('Error al eliminar categoría:', error.response?.data || error.message);
