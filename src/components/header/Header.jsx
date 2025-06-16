@@ -17,19 +17,7 @@ const currentPath = location.pathname;
         <Container>
           <Nav className="navbar">
             <BasicButton 
-                className={`btn-primary-custom ${currentPath.startsWith('/editar') ? 'btn-accent-custom' : ''}`}
-                as={Link} 
-                to="/editar">
-                editar
-            </BasicButton>
-            <BasicButton 
-                className={`btn-primary-custom ${currentPath.startsWith('/ver') ? 'btn-accent-custom' : ''}`}
-                as={Link} 
-                to="/ver">
-                ver
-            </BasicButton>
-            <BasicButton 
-                className={`btn-primary-custom ${currentPath === '/categorias' ? 'btn-accent-custom' : ''}`}
+                className={`btn-primary-custom`}
                 as={Link} 
                 to="/categorias">
                 volver
