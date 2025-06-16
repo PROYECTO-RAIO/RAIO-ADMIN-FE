@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Alert, Spinner } from 'react-bootstrap';
 import BasicButton from '../basicButton/BasicButton';
+import { createCategoria } from '../../service/apiService';
 import './CategoryForm.css';
 
 const defaultData = {
@@ -113,7 +114,7 @@ function CategoriaForm({ initialData = null }) {
     try {
       // Aquí va tu llamada axios para crear la categoría
       // await axios.post('/api/categorias', formData);
-
+      await createCategoria(formData);
       alert('Categoría creada con éxito');
       setTimeout(() => {
         navigate('/categorias');
@@ -160,11 +161,11 @@ function CategoriaForm({ initialData = null }) {
         <Form.Control.Feedback type="invalid">{errors.nombre}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="descripción">
+      <Form.Group className="mb-3" controlId="descripcion">
         <Form.Label>Descripción de la categoría:</Form.Label>
         <Form.Control
           type="text"
-          name="descripción"
+          name="descripcion"
           value={formData.descripcion}
           onChange={handleChange}
           isInvalid={!!errors.descripcion}
@@ -196,10 +197,11 @@ function CategoriaForm({ initialData = null }) {
         <Form.Control.Feedback type="invalid">{errors.email_autor}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="frecuencia">
-        <Form.Label>Frecuencia:</Form.Label>
+<Form.Group className="mb-3">
         <div className="d-flex gap-2">
-          <Form.Control
+          <Form.Label htmlFor='frecuencia_num'>Frecuencia:</Form.Label>
+          <Form.Control className="input"
+            id="frecuencia_num"
             type="number"
             min="1"
             name="frecuencia_num"
@@ -208,7 +210,9 @@ function CategoriaForm({ initialData = null }) {
             isInvalid={!!errors.frecuencia_num}
             style={{ maxWidth: '100px' }}
           />
+          <Form.Label htmlFor="frecuencia_unidad"></Form.Label>
           <Form.Select
+            id="frecuencia_unidad"
             name="frecuencia_unidad"
             value={formData.frecuencia_unidad}
             onChange={handleChange}
@@ -222,6 +226,7 @@ function CategoriaForm({ initialData = null }) {
         </div>
         <Form.Control.Feedback type="invalid">{errors.frecuencia_num}</Form.Control.Feedback>
       </Form.Group>
+
 
       <Form.Group className="mb-3" controlId="limitado">
         <Form.Check
@@ -248,11 +253,12 @@ function CategoriaForm({ initialData = null }) {
         </Form.Group>
       )}
 
-      <Form.Group className="mb-3" controlId="activo">
-        <Form.Label>Estado:</Form.Label>
+      <fieldset className="mb-3">
+        <legend>Estado:</legend>
         <div>
           <Form.Check
             inline
+            id="activo-true"
             type="radio"
             label="Activo"
             name="activo"
@@ -262,6 +268,7 @@ function CategoriaForm({ initialData = null }) {
           />
           <Form.Check
             inline
+            id="activo-false"
             type="radio"
             label="Inactivo"
             name="activo"
@@ -270,7 +277,7 @@ function CategoriaForm({ initialData = null }) {
             onChange={() => setFormData({ ...formData, activo: false })}
           />
         </div>
-      </Form.Group>
+      </fieldset>
 
       <Form.Group className="mb-3" controlId="fecha_inicio">
         <Form.Label>Fecha de inicio:</Form.Label>
@@ -331,10 +338,11 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       {formData.demora && (
-        <Form.Group className="mb-3" controlId="periodo_retraso">
-          <Form.Label>Periodo de retraso:</Form.Label>
+        <Form.Group className="mb-3">
+          <Form.Label htmlFor='periodo_retraso_num'>Periodo de retraso:</Form.Label>
           <div className="d-flex gap-2">
             <Form.Control
+              id="periodo_retraso_num"
               type="number"
               min="0"
               name="periodo_retraso_num"
@@ -343,7 +351,9 @@ function CategoriaForm({ initialData = null }) {
               isInvalid={!!errors.periodo_retraso_num}
               style={{ maxWidth: '100px' }}
             />
+            <Form.Label htmlFor='periodo_retraso_unidad'></Form.Label>
             <Form.Select
+              id="periodo_retraso_unidad"
               name="periodo_retraso_unidad"
               value={formData.periodo_retraso_unidad}
               onChange={handleChange}
@@ -358,6 +368,7 @@ function CategoriaForm({ initialData = null }) {
           <Form.Control.Feedback type="invalid">{errors.periodo_retraso_num}</Form.Control.Feedback>
         </Form.Group>
       )}
+      
       <div className="button-container">
       <BasicButton type="submit" className="btn-accent-custom mt-3" disabled={loading} size="small">
         {loading ? (
