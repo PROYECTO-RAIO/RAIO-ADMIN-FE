@@ -111,12 +111,12 @@ function CategoriaForm({ initialData = null }) {
     setLoading(true);
     try {
       if (isEditMode) {
-  await updateCategoria(initialData.id, finalData);
-  alert('Categoría actualizada con éxito');
-} else {
-  await createCategoria(finalData);
-  alert('Categoría creada con éxito');
-}
+        await updateCategoria(initialData.id, finalData);
+        alert('Categoría actualizada con éxito');
+      } else {
+        await createCategoria(finalData);
+        alert('Categoría creada con éxito');
+      }
       setTimeout(() => {
         navigate('/categorias');
       }, 2500);
@@ -152,7 +152,7 @@ function CategoriaForm({ initialData = null }) {
       <Form.Group className="mb-3">
         <Form.Label htmlFor="tituloCategoria">Nombre de la categoría:</Form.Label>
         <Form.Control
-        id="tituloCategoria"
+          id="tituloCategoria"
           name="tituloCategoria"
           value={formData.tituloCategoria}
           onChange={handleChange}
@@ -164,7 +164,7 @@ function CategoriaForm({ initialData = null }) {
       <Form.Group className="mb-3">
         <Form.Label htmlFor="descripcionCategoria">Descripción:</Form.Label>
         <Form.Control
-        id="descripcionCategoria"
+          id="descripcionCategoria"
           name="descripcionCategoria"
           value={formData.descripcionCategoria}
           onChange={handleChange}
@@ -174,7 +174,7 @@ function CategoriaForm({ initialData = null }) {
       <Form.Group className="mb-3">
         <Form.Label htmlFor="autorCategoria">Autor:</Form.Label>
         <Form.Control
-        id="autorCategoria"
+          id="autorCategoria"
           name="autorCategoria"
           value={formData.autorCategoria}
           onChange={handleChange}
@@ -184,7 +184,7 @@ function CategoriaForm({ initialData = null }) {
       <Form.Group className="mb-3">
         <Form.Label htmlFor="autorEmailCategoria">Email del autor:</Form.Label>
         <Form.Control
-        id="autorEmailCategoria"
+          id="autorEmailCategoria"
           name="autorEmailCategoria"
           value={formData.autorEmailCategoria}
           onChange={handleChange}
@@ -197,8 +197,8 @@ function CategoriaForm({ initialData = null }) {
         <Form.Label htmlFor="frecuenciaNumero">Frecuencia:</Form.Label>
         <div className="d-flex gap-2">
           <Form.Control
-          id="frecuenciaNumero"
-      name="frecuenciaNumero"
+            id="frecuenciaNumero"
+            name="frecuenciaNumero"
             type="number"
             min="1"
             value={frecuenciaNum}
@@ -206,8 +206,8 @@ function CategoriaForm({ initialData = null }) {
             style={{ maxWidth: '100px' }}
           />
           <Form.Select
-          id="frecuenciaUnidad"
-      name="frecuenciaUnidad"
+            id="frecuenciaUnidad"
+            name="frecuenciaUnidad"
             value={frecuenciaUnidad}
             onChange={(e) => setFrecuenciaUnidad(e.target.value)}
             style={{ maxWidth: '150px' }}
@@ -299,7 +299,7 @@ function CategoriaForm({ initialData = null }) {
       <Form.Group className="mb-3">
         <Form.Label htmlFor="listaCorreoUrl">Lista de correo (URL):</Form.Label>
         <Form.Control
-        id="listaCorreoUrl"
+          id="listaCorreoUrl"
           type="url"
           name="listaCorreoUrl"
           value={formData.listaCorreoUrl}
@@ -312,7 +312,7 @@ function CategoriaForm({ initialData = null }) {
       <Form.Group className="mb-3">
         <Form.Label htmlFor="archivoUrl">Link del archivo (URL):</Form.Label>
         <Form.Control
-        id="archivoUrl"
+          id="archivoUrl"
           type="url"
           name="archivoUrl"
           value={formData.archivoUrl}
@@ -338,7 +338,7 @@ function CategoriaForm({ initialData = null }) {
           <Form.Label htmlFor="retrasoNumero">Periodo de retraso:</Form.Label>
           <div className="d-flex gap-2">
             <Form.Control
-            id="retrasoNumero"
+              id="retrasoNumero"
               name="retrasoNumero"
               type="number"
               min="0"
@@ -347,7 +347,7 @@ function CategoriaForm({ initialData = null }) {
               style={{ maxWidth: '100px' }}
             />
             <Form.Select
-            id="retrasoUnidad"
+              id="retrasoUnidad"
               name="retrasoUnidad"
               value={retrasoUnidad}
               onChange={(e) => setRetrasoUnidad(e.target.value)}
