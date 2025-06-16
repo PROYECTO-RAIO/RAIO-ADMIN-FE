@@ -2,26 +2,24 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Alert, Spinner } from 'react-bootstrap';
 import BasicButton from '../basicButton/BasicButton';
-import { createCategoria } from '../../service/apiService';
+import { createCategoria, deleteCategoria } from '../../service/apiService';
 import './CategoryForm.css';
 
 const defaultData = {
-  nombre: '',
-  descripcion: '',
-  autor: '',
-  email_autor: '',
-  frecuencia_num: 1,
-  frecuencia_unidad: 'hora',
-  limitado: false,
-  total_reverberaciones: 0,
-  activo: true,
-  fecha_inicio: '',
-  fecha_final: '',
-  lista_correo_url: '',
-  archivo_url: '',
+  tituloCategoria: '',
+  descripcionCategoria: '',
+  autorCategoria: '',
+  autorEmailCategoria: '',
+  frecuenciaCategoria: '',
+  totalLimitado: 'false',
+  totalReverberaciones: '0',
+  estadoDeActividad: true,
+  fechaInicio: '',
+  fechaFinal: '',
+  listaCorreoUrl: '',
+  archivoUrl: '',
   demora: false,
-  periodo_retraso_num: 0,
-  periodo_retraso_unidad: 'minuto',
+  periodoRetraso: ''
 };
 
 function CategoriaForm({ initialData = null }) {
@@ -30,74 +28,67 @@ function CategoriaForm({ initialData = null }) {
   const [submitError, setSubmitError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const isEditMode = Boolean(initialData);
+
+  const [frecuenciaNum, setFrecuenciaNum] = useState('1');
+  const [frecuenciaUnidad, setFrecuenciaUnidad] = useState('hora');
+  const [retrasoNum, setRetrasoNum] = useState('0');
+  const [retrasoUnidad, setRetrasoUnidad] = useState('minuto');
 
   useEffect(() => {
     if (initialData) {
-      setFormData({
-        ...defaultData,
-        ...initialData,
-      });
+      setFormData({ ...defaultData, ...initialData });
+
+      const [freqNum = '1', freqUnit = 'hora'] = initialData.frecuenciaCategoria?.split(' ') || [];
+      const [retNum = '0', retUnit = 'minuto'] = initialData.periodoRetraso?.split(' ') || [];
+
+      setFrecuenciaNum(freqNum);
+      setFrecuenciaUnidad(freqUnit);
+      setRetrasoNum(retNum);
+      setRetrasoUnidad(retUnit);
     }
   }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+
+    if (name === 'totalLimitado') {
+      setFormData((prev) => ({ ...prev, totalLimitado: checked ? 'true' : 'false' }));
+    } else if (name === 'estadoDeActividad') {
+      setFormData((prev) => ({ ...prev, estadoDeActividad: value === 'true' }));
+    } else if (name === 'demora') {
+      setFormData((prev) => ({ ...prev, demora: checked }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    }
   };
 
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.nombre.trim()) newErrors.nombre = 'El nombre es obligatorio';
-
-    if (formData.nombre.length > 100) {
-      newErrors.nombre = 'El nombre es demasiado largo';
+    if (!formData.tituloCategoria.trim()) newErrors.tituloCategoria = 'El nombre es obligatorio';
+    if (!formData.autorEmailCategoria.match(/^\S+@\S+\.\S+$/)) newErrors.autorEmailCategoria = 'Email no válido';
+    if (Number(formData.totalReverberaciones) < 0) newErrors.totalReverberaciones = 'Debe ser mayor o igual a 0';
+    if (formData.fechaInicio && isNaN(new Date(formData.fechaInicio).getTime())) {
+      newErrors.fechaInicio = 'Fecha de inicio inválida';
     }
-
-    if (!/^\S+@\S+\.\S+$/.test(formData.email_autor))
-      newErrors.email_autor = 'Email no válido';
-
-    if (Number(formData.frecuencia_num) < 1)
-      newErrors.frecuencia_num = 'Debe ser un número mayor o igual a 1';
-
-    if (Number(formData.total_reverberaciones) < 0)
-      newErrors.total_reverberaciones = 'Debe ser un número mayor o igual a 0';
-
-    if (typeof formData.activo !== 'boolean') {
-      newErrors.activo = 'Debes seleccionar si está activo o inactivo';
+    if (formData.fechaFinal && isNaN(new Date(formData.fechaFinal).getTime())) {
+      newErrors.fechaFinal = 'Fecha final inválida';
+    }
+    if (
+      formData.fechaInicio &&
+      formData.fechaFinal &&
+      new Date(formData.fechaFinal) < new Date(formData.fechaInicio)
+    ) {
+      newErrors.fechaFinal = 'La fecha final debe ser posterior a la fecha de inicio';
     }
 
     const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-    if (formData.lista_correo_url && !urlRegex.test(formData.lista_correo_url))
-      newErrors.lista_correo_url = 'URL no válida';
-
-    if (formData.archivo_url && !urlRegex.test(formData.archivo_url))
-      newErrors.archivo_url = 'URL no válida';
-
-    if (formData.demora && Number(formData.periodo_retraso_num) < 0)
-      newErrors.periodo_retraso_num = 'Debe ser un número mayor o igual a 0';
-
-    if (!Number.isInteger(Number(formData.frecuencia_num))) {
-      newErrors.frecuencia_num = 'Debe ser un número entero';
+    if (formData.listaCorreoUrl && !urlRegex.test(formData.listaCorreoUrl)) {
+      newErrors.listaCorreoUrl = 'URL no válida';
     }
-
-    if (formData.fecha_inicio && isNaN(new Date(formData.fecha_inicio).getTime())) {
-      newErrors.fecha_inicio = 'Fecha de inicio no válida';
-    }
-    if (formData.fecha_final && isNaN(new Date(formData.fecha_final).getTime())) {
-      newErrors.fecha_final = 'Fecha final no válida';
-    }
-    if (
-      formData.fecha_inicio &&
-      formData.fecha_final &&
-      !isNaN(new Date(formData.fecha_inicio).getTime()) &&
-      !isNaN(new Date(formData.fecha_final).getTime()) &&
-      new Date(formData.fecha_final) < new Date(formData.fecha_inicio)
-    ) {
-      newErrors.fecha_final = 'La fecha final debe ser igual o posterior a la fecha de inicio';
+    if (formData.archivoUrl && !urlRegex.test(formData.archivoUrl)) {
+      newErrors.archivoUrl = 'URL no válida';
     }
 
     setErrors(newErrors);
@@ -108,114 +99,104 @@ function CategoriaForm({ initialData = null }) {
     e.preventDefault();
     setSubmitError(null);
 
+    const finalData = {
+      ...formData,
+      frecuenciaCategoria: `${frecuenciaNum} ${frecuenciaUnidad}`,
+      periodoRetraso: formData.demora ? `${retrasoNum} ${retrasoUnidad}` : '',
+      totalReverberaciones: formData.totalReverberaciones.toString(),
+    };
+
     if (!validate()) return;
 
     setLoading(true);
     try {
-      // Aquí va tu llamada axios para crear la categoría
-      // await axios.post('/api/categorias', formData);
-      await createCategoria(formData);
+      await createCategoria(finalData);
       alert('Categoría creada con éxito');
       setTimeout(() => {
         navigate('/categorias');
       }, 2500);
     } catch (error) {
-      alert('Error al crear la categoría');
       console.error(error);
+      alert('Error al crear la categoría');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar esta categoría?');
-    if (!confirmDelete) return;
+    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar esta categoría?');
+    if (!confirmed) return;
 
-  try {
-    setLoading(true);
-    //actualizar con datos de Services
-    await deleteCategoria(initialData.id); 
-    alert('Categoría eliminada con éxito');
-    navigate('/categorias');
-  } catch (error) {
-    console.error('Error al eliminar la categoría', error);
-    alert('No se pudo eliminar la categoría');
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const isEditMode = Boolean(initialData);
+    try {
+      setLoading(true);
+      await deleteCategoria(initialData.id);
+      alert('Categoría eliminada con éxito');
+      navigate('/categorias');
+    } catch (error) {
+      console.error('Error al eliminar', error);
+      alert('No se pudo eliminar la categoría');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Form className="custom-form" onSubmit={handleSubmit} noValidate>
       {submitError && <Alert variant="danger">{submitError}</Alert>}
 
-      <Form.Group className="mb-3" controlId="nombre">
+      <Form.Group className="mb-3">
         <Form.Label>Nombre de la categoría:</Form.Label>
         <Form.Control
-          type="text"
-          name="nombre"
-          value={formData.nombre}
+          name="tituloCategoria"
+          value={formData.tituloCategoria}
           onChange={handleChange}
-          isInvalid={!!errors.nombre}
+          isInvalid={!!errors.tituloCategoria}
         />
-        <Form.Control.Feedback type="invalid">{errors.nombre}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{errors.tituloCategoria}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="descripcion">
-        <Form.Label>Descripción de la categoría:</Form.Label>
+      <Form.Group className="mb-3">
+        <Form.Label>Descripción:</Form.Label>
         <Form.Control
-          type="text"
-          name="descripcion"
-          value={formData.descripcion}
+          name="descripcionCategoria"
+          value={formData.descripcionCategoria}
           onChange={handleChange}
-          isInvalid={!!errors.descripcion}
         />
-        <Form.Control.Feedback type="invalid">{errors.descripcion}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="autor">
-        <Form.Label>Autor de la categoría:</Form.Label>
+      <Form.Group className="mb-3">
+        <Form.Label>Autor:</Form.Label>
         <Form.Control
-          type="text"
-          name="autor"
-          value={formData.autor}
+          name="autorCategoria"
+          value={formData.autorCategoria}
           onChange={handleChange}
-          isInvalid={!!errors.autor}
         />
-        <Form.Control.Feedback type="invalid">{errors.autor}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="email_autor">
+      <Form.Group className="mb-3">
         <Form.Label>Email del autor:</Form.Label>
         <Form.Control
-          type="email"
-          name="email_autor"
-          value={formData.email_autor}
+          name="autorEmailCategoria"
+          value={formData.autorEmailCategoria}
           onChange={handleChange}
-          isInvalid={!!errors.email_autor}
+          isInvalid={!!errors.autorEmailCategoria}
         />
-        <Form.Control.Feedback type="invalid">{errors.email_autor}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{errors.autorEmailCategoria}</Form.Control.Feedback>
       </Form.Group>
 
-<Form.Group className="mb-3">
+      <Form.Group className="mb-3">
+        <Form.Label>Frecuencia:</Form.Label>
         <div className="d-flex gap-2">
-          <Form.Label htmlFor='frecuencia_num'>Frecuencia:</Form.Label>
-          <Form.Control className="input"
-            id="frecuencia_num"
+          <Form.Control
             type="number"
             min="1"
-            name="frecuencia_num"
-            value={formData.frecuencia_num}
-            onChange={handleChange}
-            isInvalid={!!errors.frecuencia_num}
+            value={frecuenciaNum}
+            onChange={(e) => setFrecuenciaNum(e.target.value)}
             style={{ maxWidth: '100px' }}
           />
-          <Form.Label htmlFor="frecuencia_unidad"></Form.Label>
           <Form.Select
-            id="frecuencia_unidad"
-            name="frecuencia_unidad"
-            value={formData.frecuencia_unidad}
-            onChange={handleChange}
+            value={frecuenciaUnidad}
+            onChange={(e) => setFrecuenciaUnidad(e.target.value)}
             style={{ maxWidth: '150px' }}
           >
             <option value="minuto">Minuto</option>
@@ -224,113 +205,104 @@ function CategoriaForm({ initialData = null }) {
             <option value="semana">Semana</option>
           </Form.Select>
         </div>
-        <Form.Control.Feedback type="invalid">{errors.frecuencia_num}</Form.Control.Feedback>
       </Form.Group>
 
-
-      <Form.Group className="mb-3" controlId="limitado">
+      <Form.Group className="mb-3">
         <Form.Check
           type="checkbox"
-          label="Limitado"
-          name="limitado"
-          checked={formData.limitado}
+          label="¿Está limitado?"
+          name="totalLimitado"
+          checked={formData.totalLimitado === 'true'}
           onChange={handleChange}
         />
       </Form.Group>
 
-      {formData.limitado && (
-        <Form.Group className="mb-3" controlId="total_reverberaciones">
+      {formData.totalLimitado === 'true' && (
+        <Form.Group className="mb-3">
           <Form.Label>Total reverberaciones:</Form.Label>
           <Form.Control
             type="number"
-            min="0"
-            name="total_reverberaciones"
-            value={formData.total_reverberaciones}
+            name="totalReverberaciones"
+            value={formData.totalReverberaciones}
             onChange={handleChange}
-            isInvalid={!!errors.total_reverberaciones}
+            isInvalid={!!errors.totalReverberaciones}
           />
-          <Form.Control.Feedback type="invalid">{errors.total_reverberaciones}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">{errors.totalReverberaciones}</Form.Control.Feedback>
         </Form.Group>
       )}
 
       <fieldset className="mb-3">
         <legend>Estado:</legend>
-        <div>
-          <Form.Check
-            inline
-            id="activo-true"
-            type="radio"
-            label="Activo"
-            name="activo"
-            value="true"
-            checked={formData.activo === true}
-            onChange={() => setFormData({ ...formData, activo: true })}
-          />
-          <Form.Check
-            inline
-            id="activo-false"
-            type="radio"
-            label="Inactivo"
-            name="activo"
-            value="false"
-            checked={formData.activo === false}
-            onChange={() => setFormData({ ...formData, activo: false })}
-          />
-        </div>
+        <Form.Check
+          inline
+          label="Activo"
+          name="estadoDeActividad"
+          value="true"
+          type="radio"
+          checked={formData.estadoDeActividad === true}
+          onChange={handleChange}
+        />
+        <Form.Check
+          inline
+          label="Inactivo"
+          name="estadoDeActividad"
+          value="false"
+          type="radio"
+          checked={formData.estadoDeActividad === false}
+          onChange={handleChange}
+        />
       </fieldset>
 
-      <Form.Group className="mb-3" controlId="fecha_inicio">
+      <Form.Group className="mb-3">
         <Form.Label>Fecha de inicio:</Form.Label>
         <Form.Control
           type="date"
-          name="fecha_inicio"
-          value={formData.fecha_inicio}
+          name="fechaInicio"
+          value={formData.fechaInicio}
           onChange={handleChange}
-          isInvalid={!!errors.fecha_inicio}
+          isInvalid={!!errors.fechaInicio}
         />
-        <Form.Control.Feedback type="invalid">{errors.fecha_inicio}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{errors.fechaInicio}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="fecha_final">
+      <Form.Group className="mb-3">
         <Form.Label>Fecha final:</Form.Label>
         <Form.Control
           type="date"
-          name="fecha_final"
-          value={formData.fecha_final}
+          name="fechaFinal"
+          value={formData.fechaFinal}
           onChange={handleChange}
-          isInvalid={!!errors.fecha_final}
+          isInvalid={!!errors.fechaFinal}
         />
-        <Form.Control.Feedback type="invalid">{errors.fecha_final}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{errors.fechaFinal}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="lista_correo_url">
+      <Form.Group className="mb-3">
         <Form.Label>Lista de correo (URL):</Form.Label>
         <Form.Control
-          type="url"
-          name="lista_correo_url"
-          value={formData.lista_correo_url}
+          name="listaCorreoUrl"
+          value={formData.listaCorreoUrl}
           onChange={handleChange}
-          isInvalid={!!errors.lista_correo_url}
+          isInvalid={!!errors.listaCorreoUrl}
         />
-        <Form.Control.Feedback type="invalid">{errors.lista_correo_url}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{errors.listaCorreoUrl}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="archivo_url">
+      <Form.Group className="mb-3">
         <Form.Label>Link del archivo (URL):</Form.Label>
         <Form.Control
-          type="url"
-          name="archivo_url"
-          value={formData.archivo_url}
+          name="archivoUrl"
+          value={formData.archivoUrl}
           onChange={handleChange}
-          isInvalid={!!errors.archivo_url}
+          isInvalid={!!errors.archivoUrl}
         />
-        <Form.Control.Feedback type="invalid">{errors.archivo_url}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{errors.archivoUrl}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="demora">
+      <Form.Group className="mb-3">
         <Form.Check
           type="checkbox"
-          label="Demora"
+          label="¿Tiene demora?"
           name="demora"
           checked={formData.demora}
           onChange={handleChange}
@@ -339,24 +311,18 @@ function CategoriaForm({ initialData = null }) {
 
       {formData.demora && (
         <Form.Group className="mb-3">
-          <Form.Label htmlFor='periodo_retraso_num'>Periodo de retraso:</Form.Label>
+          <Form.Label>Periodo de retraso:</Form.Label>
           <div className="d-flex gap-2">
             <Form.Control
-              id="periodo_retraso_num"
               type="number"
               min="0"
-              name="periodo_retraso_num"
-              value={formData.periodo_retraso_num}
-              onChange={handleChange}
-              isInvalid={!!errors.periodo_retraso_num}
+              value={retrasoNum}
+              onChange={(e) => setRetrasoNum(e.target.value)}
               style={{ maxWidth: '100px' }}
             />
-            <Form.Label htmlFor='periodo_retraso_unidad'></Form.Label>
             <Form.Select
-              id="periodo_retraso_unidad"
-              name="periodo_retraso_unidad"
-              value={formData.periodo_retraso_unidad}
-              onChange={handleChange}
+              value={retrasoUnidad}
+              onChange={(e) => setRetrasoUnidad(e.target.value)}
               style={{ maxWidth: '150px' }}
             >
               <option value="minuto">Minuto</option>
@@ -365,32 +331,33 @@ function CategoriaForm({ initialData = null }) {
               <option value="semana">Semana</option>
             </Form.Select>
           </div>
-          <Form.Control.Feedback type="invalid">{errors.periodo_retraso_num}</Form.Control.Feedback>
         </Form.Group>
       )}
-      
-      <div className="button-container">
-      <BasicButton type="submit" className="btn-accent-custom mt-3" disabled={loading} size="small">
-        {loading ? (
-          <>
-            <Spinner animation="border" size="sm" className="me-2" />
-            Guardando...
-          </>
-        ) : (
-          isEditMode ? 'Guardar cambios' : 'Crear categoría'
-        )}
-      </BasicButton>
 
-      {isEditMode && (
-        <BasicButton
-          type="button"
-          className="btn-tertiary-custom"
-          size="small"
-          onClick={handleDelete}
-          >
-          Eliminar categoría
+      <div className="button-container">
+        <BasicButton type="submit" className="btn-accent-custom mt-3" disabled={loading} size="small">
+          {loading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />
+              Guardando...
+            </>
+          ) : isEditMode ? (
+            'Guardar cambios'
+          ) : (
+            'Crear categoría'
+          )}
         </BasicButton>
-      )}
+
+        {isEditMode && (
+          <BasicButton
+            type="button"
+            className="btn-tertiary-custom"
+            size="small"
+            onClick={handleDelete}
+          >
+            Eliminar categoría
+          </BasicButton>
+        )}
       </div>
     </Form>
   );

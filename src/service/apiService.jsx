@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/api/v1/';
+const BASE_URL = 'http://localhost:8080/api/v1';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 
 export const getCategorias = async () => {
   try {
-    const response = await axiosInstance.get('categorias');
+    const response = await axiosInstance.get('/categorias');
     return response.data;
   } catch (error) {
     console.error('Error al obtener categorías:', error.response?.data || error.message);
@@ -21,7 +21,7 @@ export const getCategorias = async () => {
 
 export const getCategoriaById = async (id) => {
   try {
-    const response = await axiosInstance.get(`categorias/${id}`);
+    const response = await axiosInstance.get(`/categorias/${id}`);
     return response.data; 
   } catch (error) {
     console.error('Error al obtener categoría por ID:', error.response?.data || error.message);
@@ -31,7 +31,7 @@ export const getCategoriaById = async (id) => {
 
 export const createCategoria = async (categoria) => {
   try {
-    const response = await axiosInstance.post('categorias', categoria);
+    const response = await axiosInstance.post('/categorias', categoria);
     return response.data; 
   } catch (error) {
     console.error('Error al crear categoría:', error.response?.data || error.message);
@@ -58,3 +58,5 @@ export const deleteCategoria = async (id) => {
     throw error;
   }
 };
+
+export default axiosInstance;
