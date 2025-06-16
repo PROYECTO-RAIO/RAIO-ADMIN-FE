@@ -5,7 +5,7 @@ import "./LoginForm.css";
 
 function LoginForm() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [contraseña, setContraseña] = useState('');
   const [emailErr, setEmailErr] = useState(false);
   const [pwdError, setPwdError] = useState(false);
 
@@ -24,17 +24,26 @@ function LoginForm() {
       setEmailErr(false);
     }
 
-    if (!validPassword.test(password)) {
+    if (!validPassword.test(contraseña)) {
       setPwdError(true);
       isValid = false;
     } else {
       setPwdError(false);
     }
 
-    if (isValid) {
-      console.log("Login exitoso");
-    
-    }
+if (isValid) {
+  fetch("http://localhost:8080/api/v1/admins/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, contraseña }) 
+  })
+    .then(res => res.text())
+    .then(data => {
+      console.log("Server response:", data);
+    });
+}
   };
 
   return (
@@ -59,8 +68,8 @@ function LoginForm() {
             className="password-input"
             type="password"
             placeholder="ingresa tu contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={contraseña}
+            onChange={(e) => setContraseña(e.target.value)}
             isInvalid={pwdError}
           />
           {pwdError && <Form.Text className="text-danger">contraseña inválida (mín. 6 caracteres)</Form.Text>}
