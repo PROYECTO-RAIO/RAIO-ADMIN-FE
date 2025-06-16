@@ -233,9 +233,10 @@ function CategoriaForm({ initialData = null }) {
 
       {formData.totalLimitado === 'true' && (
         <Form.Group className="mb-3">
-          <Form.Label>Total reverberaciones:</Form.Label>
+          <Form.Label htmlFor="totalReverberaciones">Total reverberaciones:</Form.Label>
           <Form.Control
             type="number"
+            id="totalReverberaciones"
             name="totalReverberaciones"
             value={formData.totalReverberaciones}
             onChange={handleChange}
@@ -275,7 +276,7 @@ function CategoriaForm({ initialData = null }) {
           type="date"
           id="fechaInicio"
           name="fechaInicio"
-          value={formData.fechaInicio}
+          value={formData.fechaInicio || ''}
           onChange={handleChange}
           isInvalid={!!errors.fechaInicio}
         />
@@ -288,7 +289,7 @@ function CategoriaForm({ initialData = null }) {
           type="date"
           id="fechaFinal"
           name="fechaFinal"
-          value={formData.fechaFinal}
+          value={formData.fechaFinal || ''}
           onChange={handleChange}
           isInvalid={!!errors.fechaFinal}
         />
@@ -334,7 +335,7 @@ function CategoriaForm({ initialData = null }) {
 
       {formData.demora && (
         <Form.Group className="mb-3">
-          <Form.Label>Periodo de retraso:</Form.Label>
+          <Form.Label htmlFor="retrasoNumero">Periodo de retraso:</Form.Label>
           <div className="d-flex gap-2">
             <Form.Control
             id="retrasoNumero"
