@@ -13,7 +13,7 @@ function Router() {
                 <Route path="/categorias" element={<CategoryPage />}/>
                 <Route path="/crear" element={<Create />}/>
                 <Route path="/editar" element={<Edit />}/>
-                <Route path="/editar/:category" element={<EditCategory />} />
+                <Route path="/editar/:id" element={<EditCategory />} />
                 <Route path="/ver" element={<CategoryPage />}/>
             </Routes>
         </BrowserRouter>

@@ -28,7 +28,7 @@ function CategoriaForm({ initialData = null }) {
   const [submitError, setSubmitError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const isEditMode = Boolean(initialData);
+  const isEditMode = !!initialData?.id;
 
   const [frecuenciaNum, setFrecuenciaNum] = useState('1');
   const [frecuenciaUnidad, setFrecuenciaUnidad] = useState('hora');
@@ -110,14 +110,19 @@ function CategoriaForm({ initialData = null }) {
 
     setLoading(true);
     try {
-      await createCategoria(finalData);
-      alert('Categoría creada con éxito');
+      if (isEditMode) {
+  await updateCategoria(initialData.id, finalData);
+  alert('Categoría actualizada con éxito');
+} else {
+  await createCategoria(finalData);
+  alert('Categoría creada con éxito');
+}
       setTimeout(() => {
         navigate('/categorias');
       }, 2500);
     } catch (error) {
       console.error(error);
-      alert('Error al crear la categoría');
+      alert('Error al guardar la categoría');
     } finally {
       setLoading(false);
     }

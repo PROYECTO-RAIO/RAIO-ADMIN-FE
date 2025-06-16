@@ -1,29 +1,39 @@
-import Header from "../components/header/Header";
-import CategoryForm from "../components/categoryForm/CategoryForm";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Header from '../components/header/Header';
+import CategoryForm from '../components/categoryForm/CategoryForm';
+import { getCategoriaById } from '../service/apiService';
 
 function EditCategory() {
-        const ejemploData = {
-tituloCategoria: 'Noticias Diarias',
-  descripcionCategoria: 'Categoría para la distribución diaria de noticias',
-  autorCategoria: 'Juan Pérez',
-  autorEmailCategoria: 'juan.perez@example.com',
-  frecuenciaCategoria: '1 día',                     
-  totalLimitado: 'true',                             
-  totalReverberaciones: '5',                        
-  estadoDeActividad: true,
-  fechaInicio: '2025-06-01',
-  fechaFinal: '2025-12-31',
-  listaCorreoUrl: 'https://listas.ejemplo.com/noticias',
-  archivoUrl: 'https://archivos.ejemplo.com/noticias.pdf',
-  demora: true,
-  periodoRetraso: '15 minuto'              
-        };
+  const { id } = useParams();
+  const [initialData, setInitialData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    return (
+  useEffect(() => {
+    async function fetchCategoria() {
+      try {
+        const data = await getCategoriaById(id);
+        setInitialData(data);
+      } catch (error) {
+        console.error('Error al cargar la categoría', error);
+        alert('No se pudo cargar la categoría');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCategoria();
+  }, [id]);
+
+  if (loading) return <p>Cargando categoría...</p>;
+  if (!initialData) return <p>No se encontró la categoría.</p>;
+
+  return (
     <>
-        <Header />
-        <CategoryForm initialData={ejemploData}/>
+      <Header />
+      <CategoryForm initialData={initialData} />
     </>
-)}
+  );
+}
 
 export default EditCategory;
