@@ -150,8 +150,9 @@ function CategoriaForm({ initialData = null }) {
       {submitError && <Alert variant="danger">{submitError}</Alert>}
 
       <Form.Group className="mb-3">
-        <Form.Label>Nombre de la categoría:</Form.Label>
+        <Form.Label htmlFor="tituloCategoria">Nombre de la categoría:</Form.Label>
         <Form.Control
+        id="tituloCategoria"
           name="tituloCategoria"
           value={formData.tituloCategoria}
           onChange={handleChange}
@@ -161,8 +162,9 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Descripción:</Form.Label>
+        <Form.Label htmlFor="descripcionCategoria">Descripción:</Form.Label>
         <Form.Control
+        id="descripcionCategoria"
           name="descripcionCategoria"
           value={formData.descripcionCategoria}
           onChange={handleChange}
@@ -170,8 +172,9 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Autor:</Form.Label>
+        <Form.Label htmlFor="autorCategoria">Autor:</Form.Label>
         <Form.Control
+        id="autorCategoria"
           name="autorCategoria"
           value={formData.autorCategoria}
           onChange={handleChange}
@@ -179,8 +182,9 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Email del autor:</Form.Label>
+        <Form.Label htmlFor="autorEmailCategoria">Email del autor:</Form.Label>
         <Form.Control
+        id="autorEmailCategoria"
           name="autorEmailCategoria"
           value={formData.autorEmailCategoria}
           onChange={handleChange}
@@ -190,9 +194,11 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Frecuencia:</Form.Label>
+        <Form.Label htmlFor="frecuenciaNumero">Frecuencia:</Form.Label>
         <div className="d-flex gap-2">
           <Form.Control
+          id="frecuenciaNumero"
+      name="frecuenciaNumero"
             type="number"
             min="1"
             value={frecuenciaNum}
@@ -200,6 +206,8 @@ function CategoriaForm({ initialData = null }) {
             style={{ maxWidth: '100px' }}
           />
           <Form.Select
+          id="frecuenciaUnidad"
+      name="frecuenciaUnidad"
             value={frecuenciaUnidad}
             onChange={(e) => setFrecuenciaUnidad(e.target.value)}
             style={{ maxWidth: '150px' }}
@@ -216,6 +224,7 @@ function CategoriaForm({ initialData = null }) {
         <Form.Check
           type="checkbox"
           label="¿Está limitado?"
+          id="totalLimitado"
           name="totalLimitado"
           checked={formData.totalLimitado === 'true'}
           onChange={handleChange}
@@ -241,6 +250,7 @@ function CategoriaForm({ initialData = null }) {
         <Form.Check
           inline
           label="Activo"
+          id="estadoDeActividadActivo"
           name="estadoDeActividad"
           value="true"
           type="radio"
@@ -250,6 +260,7 @@ function CategoriaForm({ initialData = null }) {
         <Form.Check
           inline
           label="Inactivo"
+          id="estadoDeActividadInactivo"
           name="estadoDeActividad"
           value="false"
           type="radio"
@@ -259,9 +270,10 @@ function CategoriaForm({ initialData = null }) {
       </fieldset>
 
       <Form.Group className="mb-3">
-        <Form.Label>Fecha de inicio:</Form.Label>
+        <Form.Label htmlFor="fechaInicio">Fecha de inicio:</Form.Label>
         <Form.Control
           type="date"
+          id="fechaInicio"
           name="fechaInicio"
           value={formData.fechaInicio}
           onChange={handleChange}
@@ -271,9 +283,10 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Fecha final:</Form.Label>
+        <Form.Label htmlFor="fechaFinal">Fecha final:</Form.Label>
         <Form.Control
           type="date"
+          id="fechaFinal"
           name="fechaFinal"
           value={formData.fechaFinal}
           onChange={handleChange}
@@ -283,8 +296,10 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Lista de correo (URL):</Form.Label>
+        <Form.Label htmlFor="listaCorreoUrl">Lista de correo (URL):</Form.Label>
         <Form.Control
+        id="listaCorreoUrl"
+          type="url"
           name="listaCorreoUrl"
           value={formData.listaCorreoUrl}
           onChange={handleChange}
@@ -294,8 +309,10 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Link del archivo (URL):</Form.Label>
+        <Form.Label htmlFor="archivoUrl">Link del archivo (URL):</Form.Label>
         <Form.Control
+        id="archivoUrl"
+          type="url"
           name="archivoUrl"
           value={formData.archivoUrl}
           onChange={handleChange}
@@ -308,6 +325,7 @@ function CategoriaForm({ initialData = null }) {
         <Form.Check
           type="checkbox"
           label="¿Tiene demora?"
+          id="demora"
           name="demora"
           checked={formData.demora}
           onChange={handleChange}
@@ -319,6 +337,8 @@ function CategoriaForm({ initialData = null }) {
           <Form.Label>Periodo de retraso:</Form.Label>
           <div className="d-flex gap-2">
             <Form.Control
+            id="retrasoNumero"
+              name="retrasoNumero"
               type="number"
               min="0"
               value={retrasoNum}
@@ -326,6 +346,8 @@ function CategoriaForm({ initialData = null }) {
               style={{ maxWidth: '100px' }}
             />
             <Form.Select
+            id="retrasoUnidad"
+              name="retrasoUnidad"
               value={retrasoUnidad}
               onChange={(e) => setRetrasoUnidad(e.target.value)}
               style={{ maxWidth: '150px' }}
