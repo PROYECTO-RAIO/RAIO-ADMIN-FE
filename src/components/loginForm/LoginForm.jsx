@@ -9,6 +9,8 @@ function LoginForm() {
   const [contraseña, setContraseña] = useState('');
   const [emailErr, setEmailErr] = useState(false);
   const [pwdError, setPwdError] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); 
 
 
   const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,9 +38,13 @@ function LoginForm() {
       try {
         const response = await loginAdmin(email, contraseña);
         console.log("Respuesta del servidor:", response);
-        // Add navigate here & UX
+          setMessage("Inicio de sesión exitoso. ¡Bienvenide! Te redirigmos en 3 segundos.");
+          setMessageType('success');
+          // Add navigate here & UX
       } catch (error) {
         console.error("Error:", error);
+          setMessage("Error al iniciar sesión. Verifica tus credenciales e intenta de nuevo.");
+          setMessageType('error');
       }
     }
   };
@@ -75,6 +81,11 @@ function LoginForm() {
         <Button className="btn-secondary-custom" variant="secondary" type="submit">
           login
         </Button>
+        {message && (
+        <div className={`ux-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}>
+          {message}
+        </div>
+        )}
       </Form>
     </div>
   );
