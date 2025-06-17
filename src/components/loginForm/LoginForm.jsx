@@ -39,7 +39,7 @@ function LoginForm() {
       try {
         const response = await loginAdmin(email, contraseña);
         console.log("Respuesta del servidor:", response);
-          setMessage("Inicio de sesión exitoso. ¡Bienvenide! Te redirigmos en 3 segundos.");
+          setMessage("Inicio de sesión exitoso.\n¡Bienvenide!\nTe redirigmos en 3 segundos.");
           setMessageType('success');
             setTimeout(() => {
             navigate('/categorias');
@@ -86,7 +86,14 @@ function LoginForm() {
         </Button>
         {message && (
         <div className={`ux-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}>
-          {message}
+          <span style={{ whiteSpace: 'pre-line' }}>{message}</span>
+            <button
+              className="btn-close-message"
+              onClick={() => setMessage('')}
+              aria-label="Cerrar mensaje"
+              >
+              ✖
+            </button>
         </div>
         )}
       </Form>
