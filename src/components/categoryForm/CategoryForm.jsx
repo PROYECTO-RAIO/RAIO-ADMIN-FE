@@ -14,9 +14,10 @@ const defaultData = {
   totalLimitado: 'false',
   totalReverberaciones: '0',
   estadoDeActividad: true,
+  temporalidad: false,
   fechaInicio: '',
   fechaFinal: '',
-  listaCorreoUrl: '',
+  listaCorreo: '',
   archivoUrl: '',
   demora: false,
   periodoRetraso: ''
@@ -56,6 +57,8 @@ function CategoriaForm({ initialData = null }) {
       setFormData((prev) => ({ ...prev, totalLimitado: checked ? 'true' : 'false' }));
     } else if (name === 'estadoDeActividad') {
       setFormData((prev) => ({ ...prev, estadoDeActividad: value === 'true' }));
+    } else if (name === 'temporalidad') {
+      setFormData((prev) => ({ ...prev, temporalidad: checked ? 'true' : 'false' })); 
     } else if (name === 'demora') {
       setFormData((prev) => ({ ...prev, demora: checked }));
     } else {
@@ -84,9 +87,6 @@ function CategoriaForm({ initialData = null }) {
     }
 
     const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-    if (formData.listaCorreoUrl && !urlRegex.test(formData.listaCorreoUrl)) {
-      newErrors.listaCorreoUrl = 'URL no válida';
-    }
     if (formData.archivoUrl && !urlRegex.test(formData.archivoUrl)) {
       newErrors.archivoUrl = 'URL no válida';
     }
@@ -271,6 +271,18 @@ function CategoriaForm({ initialData = null }) {
       </fieldset>
 
       <Form.Group className="mb-3">
+        <Form.Check
+          type="checkbox"
+          label="¿Es temporal?"
+          id="temporalidad"
+          name="temporalidad"
+          checked={formData.temporalidad === 'true'}
+          onChange={handleChange}
+        />
+      </Form.Group>
+
+      {formData.temporalidad === 'true' && (
+      <Form.Group className="mb-3">
         <Form.Label htmlFor="fechaInicio">Fecha de inicio:</Form.Label>
         <Form.Control
           type="date"
@@ -281,9 +293,7 @@ function CategoriaForm({ initialData = null }) {
           isInvalid={!!errors.fechaInicio}
         />
         <Form.Control.Feedback type="invalid">{errors.fechaInicio}</Form.Control.Feedback>
-      </Form.Group>
 
-      <Form.Group className="mb-3">
         <Form.Label htmlFor="fechaFinal">Fecha final:</Form.Label>
         <Form.Control
           type="date"
@@ -295,18 +305,18 @@ function CategoriaForm({ initialData = null }) {
         />
         <Form.Control.Feedback type="invalid">{errors.fechaFinal}</Form.Control.Feedback>
       </Form.Group>
+      )}
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="listaCorreoUrl">Lista de correo (URL):</Form.Label>
+        <Form.Label htmlFor="listaCorreo">Lista de correo (email):</Form.Label>
         <Form.Control
-          id="listaCorreoUrl"
-          type="url"
-          name="listaCorreoUrl"
-          value={formData.listaCorreoUrl}
+          id="listaCorreo"
+          name="listaCorreo"
+          value={formData.listaCorreo}
           onChange={handleChange}
-          isInvalid={!!errors.listaCorreoUrl}
+          isInvalid={!!errors.listaCorreo}
         />
-        <Form.Control.Feedback type="invalid">{errors.listaCorreoUrl}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{errors.listaCorreo}</Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-3">
