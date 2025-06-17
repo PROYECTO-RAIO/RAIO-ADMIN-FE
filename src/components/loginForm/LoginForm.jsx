@@ -1,6 +1,7 @@
 import Button from '../basicButton/BasicButton';
 import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { loginAdmin } from '../../service/apiService';
 import "./LoginForm.css";
 
@@ -11,7 +12,7 @@ function LoginForm() {
   const [pwdError, setPwdError] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState(''); 
-
+  const navigate = useNavigate();
 
   const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const validPassword = /^[A-Za-z0-9]{6,}$/; 
@@ -40,7 +41,9 @@ function LoginForm() {
         console.log("Respuesta del servidor:", response);
           setMessage("Inicio de sesión exitoso. ¡Bienvenide! Te redirigmos en 3 segundos.");
           setMessageType('success');
-          // Add navigate here & UX
+            setTimeout(() => {
+            navigate('/categorias');
+            }, 3000);
       } catch (error) {
         console.error("Error:", error);
           setMessage("Error al iniciar sesión. Verifica tus credenciales e intenta de nuevo.");
