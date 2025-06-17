@@ -1,6 +1,7 @@
 import Button from '../basicButton/BasicButton';
 import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
+import { loginAdmin } from '../../service/apiService';
 import "./LoginForm.css";
 
 function LoginForm() {
@@ -13,7 +14,7 @@ function LoginForm() {
   const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const validPassword = /^[A-Za-z0-9]{6,}$/; 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
 
@@ -31,19 +32,15 @@ function LoginForm() {
       setPwdError(false);
     }
 
-if (isValid) {
-  fetch("http://localhost:8080/api/v1/admins/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email, contraseña }) 
-  })
-    .then(res => res.text())
-    .then(data => {
-      console.log("Server response:", data);
-    });
-}
+    if (isValid) {
+      try {
+        const response = await loginAdmin(email, contraseña);
+        console.log("Respuesta del servidor:", response);
+        // Add navigate here & UX
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
   };
 
   return (

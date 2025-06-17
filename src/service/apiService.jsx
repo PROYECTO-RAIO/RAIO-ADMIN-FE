@@ -9,6 +9,17 @@ const axiosInstance = axios.create({
   }
 });
 
+//Login logic - moved from form
+export const loginAdmin = async (email, contraseña) => {
+  try {
+    const response = await axiosInstance.post('/admins/login', { email, contraseña });
+    return response.data; 
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const getCategorias = async () => {
   try {
     const response = await axiosInstance.get('/categorias');
