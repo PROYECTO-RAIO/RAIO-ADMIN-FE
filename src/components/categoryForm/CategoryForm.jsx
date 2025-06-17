@@ -10,7 +10,7 @@ const defaultData = {
   descripcionCategoria: '',
   autorCategoria: '',
   autorEmailCategoria: '',
-  frecuenciaCategoria: '',
+  frecuenciaCategoria: 'siempre',
   totalLimitado: 'false',
   totalReverberaciones: '0',
   estadoDeActividad: true,
@@ -30,9 +30,7 @@ function CategoriaForm({ initialData = null }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const isEditMode = !!initialData?.id;
-
   const [frecuenciaNum, setFrecuenciaNum] = useState('1');
-  const [frecuenciaUnidad, setFrecuenciaUnidad] = useState('hora');
   const [retrasoNum, setRetrasoNum] = useState('0');
   const [retrasoUnidad, setRetrasoUnidad] = useState('minuto');
 
@@ -40,11 +38,18 @@ function CategoriaForm({ initialData = null }) {
     if (initialData) {
       setFormData({ ...defaultData, ...initialData });
 
-      const [freqNum = '1', freqUnit = 'hora'] = initialData.frecuenciaCategoria?.split(' ') || [];
+      const frecuencia = initialData.frecuenciaCategoria;
+      if (frecuencia?.includes(' ')) {
+        const [num, unit] = frecuencia.split(' ');
+        setFrecuenciaNum(num);
+        setFrecuenciaUnidad(unit);
+        setFormData((prev) => ({ ...prev, frecuenciaCategoria: 'personalizada' }));
+      } else {
+        setFormData((prev) => ({ ...prev, frecuenciaCategoria: frecuencia }));
+      }
       const [retNum = '0', retUnit = 'minuto'] = initialData.periodoRetraso?.split(' ') || [];
 
       setFrecuenciaNum(freqNum);
-      setFrecuenciaUnidad(freqUnit);
       setRetrasoNum(retNum);
       setRetrasoUnidad(retUnit);
     }
@@ -58,7 +63,9 @@ function CategoriaForm({ initialData = null }) {
     } else if (name === 'estadoDeActividad') {
       setFormData((prev) => ({ ...prev, estadoDeActividad: value === 'true' }));
     } else if (name === 'temporalidad') {
-      setFormData((prev) => ({ ...prev, temporalidad: checked ? 'true' : 'false' })); 
+      setFormData((prev) => ({ ...prev, temporalidad: checked ? 'true' : 'false' }));
+    } else if (name === 'frecuenciaCategoria') {
+      setFormData((prev) => ({ ...prev, frecuenciaCategoria: value }));
     } else if (name === 'demora') {
       setFormData((prev) => ({ ...prev, demora: checked }));
     } else {
@@ -101,7 +108,9 @@ function CategoriaForm({ initialData = null }) {
 
     const finalData = {
       ...formData,
-      frecuenciaCategoria: `${frecuenciaNum} ${frecuenciaUnidad}`,
+      frecuenciaCategoria: formData.frecuenciaCategoria === 'personalizada'
+        ? `${frecuenciaNum} emails`
+        : formData.frecuenciaCategoria,
       periodoRetraso: formData.demora ? `${retrasoNum} ${retrasoUnidad}` : '',
       totalReverberaciones: formData.totalReverberaciones.toString(),
     };
@@ -193,32 +202,54 @@ function CategoriaForm({ initialData = null }) {
         <Form.Control.Feedback type="invalid">{errors.autorEmailCategoria}</Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label htmlFor="frecuenciaNumero">Frecuencia:</Form.Label>
-        <div className="d-flex gap-2">
-          <Form.Control
-            id="frecuenciaNumero"
-            name="frecuenciaNumero"
-            type="number"
-            min="1"
-            value={frecuenciaNum}
-            onChange={(e) => setFrecuenciaNum(e.target.value)}
-            style={{ maxWidth: '100px' }}
-          />
-          <Form.Select
-            id="frecuenciaUnidad"
-            name="frecuenciaUnidad"
-            value={frecuenciaUnidad}
-            onChange={(e) => setFrecuenciaUnidad(e.target.value)}
-            style={{ maxWidth: '150px' }}
-          >
-            <option value="minuto">Minuto</option>
-            <option value="hora">Hora</option>
-            <option value="día">Día</option>
-            <option value="semana">Semana</option>
-          </Form.Select>
-        </div>
-      </Form.Group>
+      <fieldset className="mb-3">
+        <legend>Frecuencia:</legend>
+        <Form.Check
+          inline
+          label="Siempre"
+          id="frecuenciaCategoriaSiempre"
+          name="frecuenciaCategoria"
+          value="siempre"
+          type="radio"
+          checked={formData.frecuenciaCategoria === "siempre"}
+          onChange={handleChange}
+        />
+        <Form.Check
+          inline
+          label="Aleatoria"
+          id="frecuenciaCategoriaAleatoria"
+          name="frecuenciaCategoria"
+          value="aleatoria"
+          type="radio"
+          checked={formData.frecuenciaCategoria === "aleatoria"}
+          onChange={handleChange}
+        />
+        <Form.Check
+          inline
+          label="Personalizada"
+          id="frecuenciaCategoriaPersonalizada"
+          name="frecuenciaCategoria"
+          value="personalizada"
+          type="radio"
+          checked={formData.frecuenciaCategoria === "personalizada"}
+          onChange={handleChange}
+        />
+
+        {formData.frecuenciaCategoria === "personalizada" && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+            <span>Cada</span>
+            <Form.Control
+              type="number"
+              min="1"
+              value={frecuenciaNum}
+              onChange={(e) => setFrecuenciaNum(e.target.value)}
+              style={{ maxWidth: '80px' }}
+            />
+            <span>emails</span>
+          </div>
+        )}
+      </fieldset>
+
 
       <Form.Group className="mb-3">
         <Form.Check
@@ -282,29 +313,29 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       {formData.temporalidad === 'true' && (
-      <Form.Group className="mb-3">
-        <Form.Label htmlFor="fechaInicio">Fecha de inicio:</Form.Label>
-        <Form.Control
-          type="date"
-          id="fechaInicio"
-          name="fechaInicio"
-          value={formData.fechaInicio || ''}
-          onChange={handleChange}
-          isInvalid={!!errors.fechaInicio}
-        />
-        <Form.Control.Feedback type="invalid">{errors.fechaInicio}</Form.Control.Feedback>
+        <Form.Group className="mb-3">
+          <Form.Label htmlFor="fechaInicio">Fecha de inicio:</Form.Label>
+          <Form.Control
+            type="date"
+            id="fechaInicio"
+            name="fechaInicio"
+            value={formData.fechaInicio || ''}
+            onChange={handleChange}
+            isInvalid={!!errors.fechaInicio}
+          />
+          <Form.Control.Feedback type="invalid">{errors.fechaInicio}</Form.Control.Feedback>
 
-        <Form.Label htmlFor="fechaFinal">Fecha final:</Form.Label>
-        <Form.Control
-          type="date"
-          id="fechaFinal"
-          name="fechaFinal"
-          value={formData.fechaFinal || ''}
-          onChange={handleChange}
-          isInvalid={!!errors.fechaFinal}
-        />
-        <Form.Control.Feedback type="invalid">{errors.fechaFinal}</Form.Control.Feedback>
-      </Form.Group>
+          <Form.Label htmlFor="fechaFinal">Fecha final:</Form.Label>
+          <Form.Control
+            type="date"
+            id="fechaFinal"
+            name="fechaFinal"
+            value={formData.fechaFinal || ''}
+            onChange={handleChange}
+            isInvalid={!!errors.fechaFinal}
+          />
+          <Form.Control.Feedback type="invalid">{errors.fechaFinal}</Form.Control.Feedback>
+        </Form.Group>
       )}
 
       <Form.Group className="mb-3">
