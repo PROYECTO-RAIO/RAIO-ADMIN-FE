@@ -1,19 +1,23 @@
 import Button from '../basicButton/BasicButton';
 import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { loginAdmin } from '../../service/apiService';
 import "./LoginForm.css";
 
 function LoginForm() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [contraseña, setContraseña] = useState('');
   const [emailErr, setEmailErr] = useState(false);
   const [pwdError, setPwdError] = useState(false);
-
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); 
+  const navigate = useNavigate();
 
   const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const validPassword = /^[A-Za-z0-9]{6,}$/; 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
 
@@ -24,7 +28,7 @@ function LoginForm() {
       setEmailErr(false);
     }
 
-    if (!validPassword.test(password)) {
+    if (!validPassword.test(contraseña)) {
       setPwdError(true);
       isValid = false;
     } else {
@@ -32,8 +36,19 @@ function LoginForm() {
     }
 
     if (isValid) {
-      console.log("Login exitoso");
-    
+      try {
+        const response = await loginAdmin(email, contraseña);
+        console.log("Respuesta del servidor:", response);
+          setMessage("Inicio de sesión exitoso.\n¡Bienvenide!\nTe redirigmos en 3 segundos.");
+          setMessageType('success');
+            setTimeout(() => {
+            navigate('/categorias');
+            }, 3000);
+      } catch (error) {
+        console.error("Error:", error);
+          setMessage("Error al iniciar sesión. Verifica tus credenciales e intenta de nuevo.");
+          setMessageType('error');
+      }
     }
   };
 
@@ -59,8 +74,8 @@ function LoginForm() {
             className="password-input"
             type="password"
             placeholder="ingresa tu contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={contraseña}
+            onChange={(e) => setContraseña(e.target.value)}
             isInvalid={pwdError}
           />
           {pwdError && <Form.Text className="text-danger">contraseña inválida (mín. 6 caracteres)</Form.Text>}
@@ -69,6 +84,18 @@ function LoginForm() {
         <Button className="btn-secondary-custom" variant="secondary" type="submit">
           login
         </Button>
+        {message && (
+        <div className={`ux-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}>
+          <span style={{ whiteSpace: 'pre-line' }}>{message}</span>
+            <button
+              className="btn-close-message"
+              onClick={() => setMessage('')}
+              aria-label="Cerrar mensaje"
+              >
+              ✖
+            </button>
+        </div>
+        )}
       </Form>
     </div>
   );
