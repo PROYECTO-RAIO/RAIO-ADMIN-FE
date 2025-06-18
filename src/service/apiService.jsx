@@ -9,10 +9,22 @@ const axiosInstance = axios.create({
   }
 });
 
-//Login logic - moved from form
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export const loginAdmin = async (email, contraseña) => {
   try {
     const response = await axiosInstance.post('/admins/login', { email, contraseña });
+    const token = response.data.token;
+    localStorage.setItem('token', token);
     return response.data; 
   } catch (error) {
     console.error('Error al iniciar sesión:', error.response?.data || error.message);
