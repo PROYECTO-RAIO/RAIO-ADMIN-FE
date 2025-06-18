@@ -31,27 +31,40 @@ function CategoriaForm({ initialData = null }) {
   const navigate = useNavigate();
   const isEditMode = !!initialData?.id;
   const [frecuenciaNum, setFrecuenciaNum] = useState('1');
-  const [retrasoNum, setRetrasoNum] = useState('0');
-  const [retrasoUnidad, setRetrasoUnidad] = useState('minuto');
+  const [retrasoMinNum, setRetrasoMinNum] = useState('0');
+  const [retrasoMaxNum, setRetrasoMaxNum] = useState('0');
+  const [retrasoMinUnidad, setRetrasoMinUnidad] = useState('minuto');
+  const [retrasoMaxUnidad, setRetrasoMaxUnidad] = useState('minuto');
 
   useEffect(() => {
-    if (initialData) {
-      setFormData({ ...defaultData, ...initialData });
+    if (!initialData) return;
 
-      const frecuencia = initialData.frecuenciaCategoria;
-      if (frecuencia?.includes(' ')) {
-        const [num, unit] = frecuencia.split(' ');
-        setFrecuenciaNum(num);
-        setFrecuenciaUnidad(unit);
-        setFormData((prev) => ({ ...prev, frecuenciaCategoria: 'personalizada' }));
-      } else {
-        setFormData((prev) => ({ ...prev, frecuenciaCategoria: frecuencia }));
-      }
-      const [retNum = '0', retUnit = 'minuto'] = initialData.periodoRetraso?.split(' ') || [];
+    setFormData({ ...defaultData, ...initialData });
 
-      setFrecuenciaNum(freqNum);
-      setRetrasoNum(retNum);
-      setRetrasoUnidad(retUnit);
+    const frecuencia = initialData.frecuenciaCategoria;
+    if (frecuencia?.includes(' ')) {
+      const [num] = frecuencia.split(' ');
+      setFrecuenciaNum(num);
+      setFormData((prev) => ({ ...prev, frecuenciaCategoria: 'personalizada' }));
+    } else {
+      setFormData((prev) => ({ ...prev, frecuenciaCategoria: frecuencia }));
+    }
+
+    const retraso = initialData.periodoRetraso;
+
+    if (retraso?.includes('-')) {
+      const [minPart, maxPart] = retraso.split('-');
+      const [maxNum, unidad] = maxPart.trim().split(' ');
+      setRetrasoMinNum(minPart.trim());
+      setRetrasoMaxNum(maxNum.trim());
+      setRetrasoMinUnidad(unidad.trim());
+      setRetrasoMaxUnidad(unidad.trim());
+    } else if (retraso?.includes(' ')) {
+      const [num, unidad] = retraso.trim().split(' ');
+      setRetrasoMinNum(num);
+      setRetrasoMaxNum(num);
+      setRetrasoMinUnidad(unidad);
+      setRetrasoMaxUnidad(unidad);
     }
   }, [initialData]);
 
@@ -65,7 +78,12 @@ function CategoriaForm({ initialData = null }) {
     } else if (name === 'temporalidad') {
       setFormData((prev) => ({ ...prev, temporalidad: checked ? 'true' : 'false' }));
     } else if (name === 'frecuenciaCategoria') {
-      setFormData((prev) => ({ ...prev, frecuenciaCategoria: value }));
+      if (value === 'aleatoria') {
+        const random = Math.random() < 0.5 ? 0 : 1;
+        setFormData((prev) => ({ ...prev, frecuenciaCategoria: value, resultadoAleatorio: random }));
+      } else {
+        setFormData((prev) => ({ ...prev, frecuenciaCategoria: value }));
+      }
     } else if (name === 'demora') {
       setFormData((prev) => ({ ...prev, demora: checked }));
     } else {
@@ -102,17 +120,50 @@ function CategoriaForm({ initialData = null }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  const convertirAMinutos = (valor, unidad) => {
+    const numero = parseInt(valor, 10);
+    switch (unidad) {
+      case 'minuto':
+        return numero;
+      case 'hora':
+        return numero * 60;
+      case 'día':
+        return numero * 60 * 24;
+      default:
+        return 0;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
+
+    let minutosAleatorios = 0;
+    if (formData.demora) {
+      const min = convertirAMinutos(retrasoMinNum, retrasoMinUnidad);
+      const max = convertirAMinutos(retrasoMaxNum, retrasoMaxUnidad);
+
+      if (min > max) {
+        setSubmitError('El retraso mínimo no puede ser mayor que el máximo');
+        setLoading(false);
+        return;
+      }
+
+      minutosAleatorios = Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
     const finalData = {
       ...formData,
       frecuenciaCategoria: formData.frecuenciaCategoria === 'personalizada'
         ? `${frecuenciaNum} emails`
         : formData.frecuenciaCategoria,
-      periodoRetraso: formData.demora ? `${retrasoNum} ${retrasoUnidad}` : '',
+      periodoRetraso: formData.demora
+        ? `${retrasoMinNum}${retrasoMinNum !== retrasoMaxNum || retrasoMinUnidad !== retrasoMaxUnidad
+          ? `-${retrasoMaxNum} ${retrasoMaxUnidad}`
+          : ''} ${retrasoMinUnidad}`
+        : '',
       totalReverberaciones: formData.totalReverberaciones.toString(),
+      minutosAleatorios,
     };
 
     if (!validate()) return;
@@ -181,7 +232,7 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="autorCategoria">Autor:</Form.Label>
+        <Form.Label htmlFor="autorCategoria">Autor/a/e/i/(s):</Form.Label>
         <Form.Control
           id="autorCategoria"
           name="autorCategoria"
@@ -191,7 +242,7 @@ function CategoriaForm({ initialData = null }) {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="autorEmailCategoria">Email del autor:</Form.Label>
+        <Form.Label htmlFor="autorEmailCategoria">Email:</Form.Label>
         <Form.Control
           id="autorEmailCategoria"
           name="autorEmailCategoria"
@@ -235,6 +286,9 @@ function CategoriaForm({ initialData = null }) {
           onChange={handleChange}
         />
 
+        {formData.frecuenciaCategoria === "aleatoria" && (
+          <p>? =&gt; {formData.resultadoAleatorio === 1 ? "Sí" : "No"}</p>
+        )}
         {formData.frecuenciaCategoria === "personalizada" && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
             <span>Cada</span>
@@ -250,7 +304,6 @@ function CategoriaForm({ initialData = null }) {
         )}
       </fieldset>
 
-
       <Form.Group className="mb-3">
         <Form.Check
           type="checkbox"
@@ -264,7 +317,7 @@ function CategoriaForm({ initialData = null }) {
 
       {formData.totalLimitado === 'true' && (
         <Form.Group className="mb-3">
-          <Form.Label htmlFor="totalReverberaciones">Total reverberaciones:</Form.Label>
+          <Form.Label htmlFor="totalReverberaciones">Máximo de reverberaciones:</Form.Label>
           <Form.Control
             type="number"
             id="totalReverberaciones"
@@ -376,28 +429,48 @@ function CategoriaForm({ initialData = null }) {
 
       {formData.demora && (
         <Form.Group className="mb-3">
-          <Form.Label htmlFor="retrasoNumero">Periodo de retraso:</Form.Label>
+          <Form.Label htmlFor="retrasoMinNumero">Periodo de retraso aleatorio entre:</Form.Label>
           <div className="d-flex gap-2">
             <Form.Control
-              id="retrasoNumero"
+              id="retrasoMinNumero"
               name="retrasoNumero"
               type="number"
               min="0"
-              value={retrasoNum}
-              onChange={(e) => setRetrasoNum(e.target.value)}
+              value={retrasoMinNum}
+              onChange={(e) => setRetrasoMinNum(e.target.value)}
               style={{ maxWidth: '100px' }}
             />
             <Form.Select
-              id="retrasoUnidad"
+              id="retrasoMinUnidad"
               name="retrasoUnidad"
-              value={retrasoUnidad}
-              onChange={(e) => setRetrasoUnidad(e.target.value)}
+              value={retrasoMinUnidad}
+              onChange={(e) => setRetrasoMinUnidad(e.target.value)}
               style={{ maxWidth: '150px' }}
             >
               <option value="minuto">Minuto</option>
               <option value="hora">Hora</option>
               <option value="día">Día</option>
-              <option value="semana">Semana</option>
+            </Form.Select>
+
+            <Form.Control
+              id="retrasoMaxNumero"
+              name="retrasoNumero"
+              type="number"
+              min="0"
+              value={retrasoMaxNum}
+              onChange={(e) => setRetrasoMaxNum(e.target.value)}
+              style={{ maxWidth: '100px' }}
+            />
+            <Form.Select
+              id="retrasoMaxUnidad"
+              name="retrasoUnidad"
+              value={retrasoMaxUnidad}
+              onChange={(e) => setRetrasoMaxUnidad(e.target.value)}
+              style={{ maxWidth: '150px' }}
+            >
+              <option value="minuto">Minuto</option>
+              <option value="hora">Hora</option>
+              <option value="día">Día</option>
             </Form.Select>
           </div>
         </Form.Group>
