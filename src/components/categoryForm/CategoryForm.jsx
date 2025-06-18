@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Alert, Spinner } from 'react-bootstrap';
 import BasicButton from '../basicButton/BasicButton';
 import { createCategoria, updateCategoria, deleteCategoria } from '../../service/apiService';
+import { convertirAMinutos } from '../../utils/tiempoUtils';
 import './CategoryForm.css';
 
 const defaultData = {
@@ -35,6 +36,7 @@ function CategoriaForm({ initialData = null }) {
   const [retrasoMaxNum, setRetrasoMaxNum] = useState('0');
   const [retrasoMinUnidad, setRetrasoMinUnidad] = useState('minuto');
   const [retrasoMaxUnidad, setRetrasoMaxUnidad] = useState('minuto');
+  const [minutosAleatorios, setMinutosAleatorios] = useState(null);
 
   useEffect(() => {
     if (!initialData) return;
@@ -48,23 +50,6 @@ function CategoriaForm({ initialData = null }) {
       setFormData((prev) => ({ ...prev, frecuenciaCategoria: 'personalizada' }));
     } else {
       setFormData((prev) => ({ ...prev, frecuenciaCategoria: frecuencia }));
-    }
-
-    const retraso = initialData.periodoRetraso;
-
-    if (retraso?.includes('-')) {
-      const [minPart, maxPart] = retraso.split('-');
-      const [maxNum, unidad] = maxPart.trim().split(' ');
-      setRetrasoMinNum(minPart.trim());
-      setRetrasoMaxNum(maxNum.trim());
-      setRetrasoMinUnidad(unidad.trim());
-      setRetrasoMaxUnidad(unidad.trim());
-    } else if (retraso?.includes(' ')) {
-      const [num, unidad] = retraso.trim().split(' ');
-      setRetrasoMinNum(num);
-      setRetrasoMaxNum(num);
-      setRetrasoMinUnidad(unidad);
-      setRetrasoMaxUnidad(unidad);
     }
   }, [initialData]);
 
@@ -120,25 +105,13 @@ function CategoriaForm({ initialData = null }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const convertirAMinutos = (valor, unidad) => {
-    const numero = parseInt(valor, 10);
-    switch (unidad) {
-      case 'minuto':
-        return numero;
-      case 'hora':
-        return numero * 60;
-      case 'día':
-        return numero * 60 * 24;
-      default:
-        return 0;
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
 
-    let minutosAleatorios = 0;
+    if (!validate()) return;
+
+    let minutosAleatorios = null;
     if (formData.demora) {
       const min = convertirAMinutos(retrasoMinNum, retrasoMinUnidad);
       const max = convertirAMinutos(retrasoMaxNum, retrasoMaxUnidad);
@@ -150,6 +123,7 @@ function CategoriaForm({ initialData = null }) {
       }
 
       minutosAleatorios = Math.floor(Math.random() * (max - min + 1)) + min;
+      setMinutosAleatorios(minutosAleatorios);
     }
 
     const finalData = {
@@ -157,16 +131,10 @@ function CategoriaForm({ initialData = null }) {
       frecuenciaCategoria: formData.frecuenciaCategoria === 'personalizada'
         ? `${frecuenciaNum} emails`
         : formData.frecuenciaCategoria,
-      periodoRetraso: formData.demora
-        ? `${retrasoMinNum}${retrasoMinNum !== retrasoMaxNum || retrasoMinUnidad !== retrasoMaxUnidad
-          ? `-${retrasoMaxNum} ${retrasoMaxUnidad}`
-          : ''} ${retrasoMinUnidad}`
-        : '',
+      periodoRetraso: formData.demora ? minutosAleatorios : null,
       totalReverberaciones: formData.totalReverberaciones.toString(),
       minutosAleatorios,
     };
-
-    if (!validate()) return;
 
     setLoading(true);
     try {
@@ -392,7 +360,7 @@ function CategoriaForm({ initialData = null }) {
       )}
 
       <Form.Group className="mb-3">
-        <Form.Label htmlFor="listaCorreo">Lista de correo (email):</Form.Label>
+        <Form.Label htmlFor="listaCorreo">Email de la lista:</Form.Label>
         <Form.Control
           id="listaCorreo"
           name="listaCorreo"
@@ -472,7 +440,13 @@ function CategoriaForm({ initialData = null }) {
               <option value="hora">Hora</option>
               <option value="día">Día</option>
             </Form.Select>
+
           </div>
+          {minutosAleatorios !== null && (
+            <div className="mt-2">
+              <p>El retraso indeterminado fractura el ritmo, generando un eco mutante.</p>
+            </div>
+          )}
         </Form.Group>
       )}
 
