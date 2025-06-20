@@ -76,3 +76,14 @@ Solo les usuaries con permisos pueden aceder al panel administrativo.
 
 # Licencia
 Proyecto de carácter cultural/artístico. Uso interno y educativo.
+
+
+## 👩‍💻 Equipo del Proyecto RAIO
+
+Este proyecto ha sido desarrollado por un equipo multidisciplinar de mujeres apasionadas por la tecnología:
+
+- [**Kat Leverton**](https://www.linkedin.com/in/kat-leverton/) — Desarrolladora
+- [**Carolina Más**](https://www.linkedin.com/in/carolina-mas/) — Desarrolladora
+- [**Mariona Cuyàs**](https://www.linkedin.com/in/mariona-cuyas/) — Product Owner & Desarrolladora
+- [**Karisha Melendez**](https://www.linkedin.com/in/karisssha/) — Desarrolladora
+- [**Marta Ibarra**](https://www.linkedin.com/in/marta-ibarra-cumbrero/) — Scrum Master & Desarrolladora
