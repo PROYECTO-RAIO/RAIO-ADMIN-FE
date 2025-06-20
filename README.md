@@ -28,7 +28,26 @@ Este frontend permite gestionar categorías de reverberaciones - agrupaciones de
 git clone https://github.com/tu-usuario/raio-admin.git
 
 # Configuración
-Crear archivo .env en raíz del proyecto
+
+npm run dev	
+
+Inicia servidor de desarrollo
+
+npm run build	
+
+Genera build de producción
+
+npm run preview	
+
+Sirve build localmente
+
+npm run test	
+
+Ejecuta pruebas unitarias (Vitest)
+
+npm run test:e2e	
+
+Ejecuta pruebas E2E (Playwright)
 
 # Funcionalidades
 Gestión de Categorías
@@ -53,14 +72,7 @@ Editar categorías existentes
 Eliminar/desactivar categorías
 
 # Autenticación
-Nota de seguridad
-Actualmente no hay sistema de autenticación implementado. Se recomienda:
-
-Autenticación con JWT para la creación, actualización y eliminación de categorías
-
-Implementar middleware de autorización
-
-
+Solo les usuaries con permisos pueden aceder al panel administrativo. 
 
 # Licencia
 Proyecto de carácter cultural/artístico. Uso interno y educativo.
