@@ -28,6 +28,9 @@ function CategoriaForm({ initialData = null }) {
   const [formData, setFormData] = useState(defaultData);
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState(null);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const isEditMode = !!initialData?.id;
@@ -140,38 +143,43 @@ function CategoriaForm({ initialData = null }) {
     try {
       if (isEditMode) {
         await updateCategoria(initialData.id, finalData);
-        alert('Categoría actualizada con éxito');
+          setMessage("Categoría actualizada con éxito");
+          setMessageType('success');
       } else {
         await createCategoria(finalData);
-        alert('Categoría creada con éxito');
+          setMessage("Categoría creada con éxito");
+          setMessageType('success');
       }
       setTimeout(() => {
         navigate('/categorias');
       }, 2500);
     } catch (error) {
       console.error(error);
+          setMessage("Error al guardar la categoría");
+          setMessageType('error');
       alert('Error al guardar la categoría');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async () => {
-    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar esta categoría?');
-    if (!confirmed) return;
+const handleDeleteConfirmed = async () => {
+  try {
+    setLoading(true);
+    await deleteCategoria(initialData.id);
+    setMessage("Categoría eliminada con éxito");
+    setMessageType('success');
+    navigate('/categorias');
+  } catch (error) {
+    console.error('Error al eliminar', error);
+    setMessage("No se pudo eliminar la categoría");
+    setMessageType('error');
+  } finally {
+    setLoading(false);
+    setShowDeleteConfirm(false);
+  }
+};
 
-    try {
-      setLoading(true);
-      await deleteCategoria(initialData.id);
-      alert('Categoría eliminada con éxito');
-      navigate('/categorias');
-    } catch (error) {
-      console.error('Error al eliminar', error);
-      alert('No se pudo eliminar la categoría');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Form className="custom-form" onSubmit={handleSubmit} noValidate>
@@ -450,33 +458,87 @@ function CategoriaForm({ initialData = null }) {
         </Form.Group>
       )}
 
-      <div className="button-container">
-        <BasicButton type="submit" className="btn-accent-custom mt-3" disabled={loading} size="small">
-          {loading ? (
-            <>
-              <Spinner animation="border" size="sm" className="me-2" />
-              Guardando...
-            </>
-          ) : isEditMode ? (
-            'Guardar cambios'
-          ) : (
-            'Crear categoría'
-          )}
-        </BasicButton>
+  <div className="button-container">
+  <BasicButton
+    type="submit"
+    className="btn-accent-custom mt-3"
+    disabled={loading}
+    size="small"
+  >
+    {loading ? (
+      <>
+        <Spinner animation="border" size="sm" className="me-2" />
+        Guardando...
+      </>
+    ) : isEditMode ? (
+      'Guardar cambios'
+    ) : (
+      'Crear categoría'
+    )}
+  </BasicButton>
 
-        {isEditMode && (
-          <BasicButton
-            type="button"
-            className="btn-tertiary-custom"
-            size="small"
-            onClick={handleDelete}
-          >
-            Eliminar categoría
-          </BasicButton>
+  {isEditMode && (
+    <BasicButton
+      type="button"
+      className="btn-tertiary-custom"
+      size="small"
+      onClick={() => setShowDeleteConfirm(true)}
+      disabled={loading}
+    >
+      Eliminar categoría
+    </BasicButton>
+  )}
+</div>
+
+{/* Success or error message */}
+{message && (
+  <div className={`ux-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}>
+    <span style={{ whiteSpace: 'pre-line' }}>{message}</span>
+    <button
+      className="btn-close-message"
+      onClick={() => setMessage('')}
+      aria-label="Cerrar mensaje"
+    >
+      ✖
+    </button>
+  </div>
+)}
+
+{/* Delete confirmation popup */}
+{showDeleteConfirm && (
+  <div className="ux-message confirm-message">
+    <span>¿Estás seguro de que deseas eliminar esta categoría?</span>
+    <div className="mt-2">
+      <BasicButton
+        type="button"
+        className="btn-danger-custom me-2"
+        size="small"
+        onClick={handleDeleteConfirmed}
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <Spinner animation="border" size="sm" className="me-2" />
+            Eliminando...
+          </>
+        ) : (
+          'Eliminar'
         )}
-      </div>
+      </BasicButton>
+      <BasicButton
+        type="button"
+        className="btn-secondary-custom"
+        size="small"
+        onClick={() => setShowDeleteConfirm(false)}
+      >
+        Cancelar
+      </BasicButton>
+    </div>
+  </div>
+)}
     </Form>
   );
 }
+
 
 export default CategoriaForm;
