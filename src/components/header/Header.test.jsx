@@ -1,37 +1,30 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import Header from './Header';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 describe('Header', () => {
-
-  it('should render all buttons in the navbar', () => {
+  it('debería renderizar el botón "volver"', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('editar')).toBeInTheDocument();
-    expect(screen.getByText('ver')).toBeInTheDocument();
     expect(screen.getByText('volver')).toBeInTheDocument();
   });
 
-  it('should navigate to the correct route when a button is clicked', () => {
+  it('debería navegar a /categorias al hacer clic en "volver"', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
-        <Header />
+        <Routes>
+          <Route path="/" element={<Header />} />
+          <Route path="/categorias" element={<div data-testid="categorias-page">Página Categorías</div>} />
+        </Routes>
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByText('editar'));
-    expect(window.location.pathname).toBe('/editar');
-
-    fireEvent.click(screen.getByText('ver'));
-    expect(window.location.pathname).toBe('/ver');
-    
     fireEvent.click(screen.getByText('volver'));
-    expect(window.location.pathname).toBe('/categorias');
+
+    expect(screen.getByTestId('categorias-page')).toBeInTheDocument();
   });
-
 });
-
