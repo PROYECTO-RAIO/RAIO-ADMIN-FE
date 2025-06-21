@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Form, Alert, Spinner } from 'react-bootstrap';
 import BasicButton from '../basicButton/BasicButton';
@@ -31,6 +32,10 @@ function CategoriaForm({ initialData = null }) {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); 
+  const [deleteMessage, setDeleteMessage] = useState('');
+  const [deleteMessageType, setDeleteMessageType] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const isEditMode = !!initialData?.id;
@@ -163,22 +168,51 @@ function CategoriaForm({ initialData = null }) {
     }
   };
 
+// const handleDeleteConfirmed = async () => {
+//   try {
+//     setLoading(true);
+//     await deleteCategoria(initialData.id);
+//     setMessage("Categoría eliminada con éxito");
+//     setMessageType('success');
+//     navigate('/categorias');
+//   } catch (error) {
+//     console.error('Error al eliminar', error);
+//     setMessage("No se pudo eliminar la categoría");
+//     setMessageType('error');
+//   } finally {
+//     setLoading(false);
+//     setShowDeleteConfirm(false);
+//   }
+// };
 const handleDeleteConfirmed = async () => {
   try {
     setLoading(true);
     await deleteCategoria(initialData.id);
+    
     setMessage("Categoría eliminada con éxito");
     setMessageType('success');
+    
     navigate('/categorias');
   } catch (error) {
     console.error('Error al eliminar', error);
-    setMessage("No se pudo eliminar la categoría");
+
+    const backendMessage = error.response?.data?.message || "No se pudo eliminar la categoría";
+        setMessage(backendMessage);
     setMessageType('error');
+    setShowDeleteConfirm(false);
+    // setDeleteMessage(backendMessage);
+    // setDeleteMessageType('error');
+    // setMessage(backendMessage);
+    // setMessageType('error');
+    // setDeleteError(backendMessage);
+    // setShowErrorModal(true);
+
   } finally {
     setLoading(false);
-    setShowDeleteConfirm(false);
+    // setShowDeleteConfirm(false);
   }
 };
+
 
 
   return (
@@ -490,7 +524,6 @@ const handleDeleteConfirmed = async () => {
   )}
 </div>
 
-{/* Success or error message */}
 {message && (
   <div className={`ux-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}>
     <span style={{ whiteSpace: 'pre-line' }}>{message}</span>
@@ -504,41 +537,49 @@ const handleDeleteConfirmed = async () => {
   </div>
 )}
 
-{/* Delete confirmation popup */}
-{showDeleteConfirm && (
-  <div className="ux-message confirm-message">
-    <span>¿Estás seguro de que deseas eliminar esta categoría?</span>
-    <div className="mt-2">
-      <BasicButton
-        type="button"
-        className="btn-danger-custom me-2"
-        size="small"
-        onClick={handleDeleteConfirmed}
-        disabled={loading}
-      >
-        {loading ? (
-          <>
-            <Spinner animation="border" size="sm" className="me-2" />
-            Eliminando...
-          </>
-        ) : (
-          'Eliminar'
-        )}
-      </BasicButton>
-      <BasicButton
-        type="button"
-        className="btn-secondary-custom"
-        size="small"
-        onClick={() => setShowDeleteConfirm(false)}
-      >
-        Cancelar
-      </BasicButton>
-    </div>
-  </div>
-)}
+<Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirmar eliminación</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p>¿Estás seguro de que deseas eliminar esta categoría?</p>
+  </Modal.Body>
+  <Modal.Footer className="modal-footer">
+    <BasicButton
+      type="button"
+      className="btn-danger-custom me-2"
+      size="small"
+      onClick={handleDeleteConfirmed}
+      disabled={loading}
+    >
+      {loading ? (
+        <>
+          <Spinner animation="border" size="sm" className="me-2" />
+          Eliminando...
+        </>
+      ) : (
+        'Eliminar'
+      )}
+    </BasicButton>
+    <BasicButton
+      type="button"
+      className="btn-secondary-custom"
+      size="small"
+      // onClick={() => setShowDeleteConfirm(false)}
+      onClick={() => setShowDeleteConfirm(true)}
+    >
+      Cancelar
+    </BasicButton>
+  </Modal.Footer>
+</Modal>
+
     </Form>
   );
 }
+
+
+
+
 
 
 export default CategoriaForm;
