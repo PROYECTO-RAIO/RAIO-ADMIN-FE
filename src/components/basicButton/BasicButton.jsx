@@ -8,7 +8,7 @@ function BasicButton({ className = "", active, size, href, children, ...props })
     <Button
       active={active}
       className={`btn ${className} ${sizeClass}`}
-      {...(href ? { href } : {})} // only include href if it's explicitly passed
+      {...(href ? { href } : {})} 
       {...props}
     >
       {children}

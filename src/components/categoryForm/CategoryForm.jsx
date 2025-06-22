@@ -31,11 +31,7 @@ function CategoriaForm({ initialData = null }) {
   const [submitError, setSubmitError] = useState(null);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); 
-  const [deleteMessage, setDeleteMessage] = useState('');
-  const [deleteMessageType, setDeleteMessageType] = useState('');
-  const [deleteError, setDeleteError] = useState('');
-  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const isEditMode = !!initialData?.id;
@@ -85,39 +81,39 @@ function CategoriaForm({ initialData = null }) {
   };
 
   const validate = (isEditMode) => {
-  const newErrors = {};
-  const today = new Date();
-  const startDate = new Date(formData.fechaInicio);
-  const endDate = new Date(formData.fechaFinal);
+    const newErrors = {};
+    const today = new Date();
+    const startDate = new Date(formData.fechaInicio);
+    const endDate = new Date(formData.fechaFinal);
 
-  if (!formData.tituloCategoria.trim()) newErrors.tituloCategoria = 'El nombre es obligatorio';
-  if (!formData.autorEmailCategoria.match(/^\S+@\S+\.\S+$/)) newErrors.autorEmailCategoria = 'Email no válido';
-  if (Number(formData.totalReverberaciones) < 0) newErrors.totalReverberaciones = 'Debe ser mayor o igual a 0';
+    if (!formData.tituloCategoria.trim()) newErrors.tituloCategoria = 'El nombre es obligatorio';
+    if (!formData.autorEmailCategoria.match(/^\S+@\S+\.\S+$/)) newErrors.autorEmailCategoria = 'Email no válido';
+    if (Number(formData.totalReverberaciones) < 0) newErrors.totalReverberaciones = 'Debe ser mayor o igual a 0';
 
-  if (formData.fechaInicio && isNaN(startDate.getTime())) {
-    newErrors.fechaInicio = 'Fecha de inicio inválida';
-  }
+    if (formData.fechaInicio && isNaN(startDate.getTime())) {
+      newErrors.fechaInicio = 'Fecha de inicio inválida';
+    }
 
-  if (formData.fechaFinal && isNaN(endDate.getTime())) {
-    newErrors.fechaFinal = 'Fecha final inválida';
-  }
+    if (formData.fechaFinal && isNaN(endDate.getTime())) {
+      newErrors.fechaFinal = 'Fecha final inválida';
+    }
 
-  if (formData.fechaInicio && formData.fechaFinal && endDate < startDate) {
-    newErrors.fechaFinal = 'La fecha final debe ser posterior a la fecha de inicio';
-  }
+    if (formData.fechaInicio && formData.fechaFinal && endDate < startDate) {
+      newErrors.fechaFinal = 'La fecha final debe ser posterior a la fecha de inicio';
+    }
 
-  if (!isEditMode && formData.fechaInicio && startDate < today) {
-    newErrors.fechaInicio = 'La fecha de inicio no puede ser anterior a hoy';
-  }
+    if (!isEditMode && formData.fechaInicio && startDate < today) {
+      newErrors.fechaInicio = 'La fecha de inicio no puede ser anterior a hoy';
+    }
 
-  const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-  if (formData.archivoUrl && !urlRegex.test(formData.archivoUrl)) {
-    newErrors.archivoUrl = 'URL no válida';
-  }
+    const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
+    if (formData.archivoUrl && !urlRegex.test(formData.archivoUrl)) {
+      newErrors.archivoUrl = 'URL no válida';
+    }
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
 
   const handleSubmit = async (e) => {
@@ -155,71 +151,46 @@ function CategoriaForm({ initialData = null }) {
     try {
       if (isEditMode) {
         await updateCategoria(initialData.id, finalData);
-          setMessage("Categoría actualizada con éxito");
-          setMessageType('success');
+        setMessage("Categoría actualizada con éxito");
+        setMessageType('success');
       } else {
         await createCategoria(finalData);
-          setMessage("Categoría creada con éxito");
-          setMessageType('success');
+        setMessage("Categoría creada con éxito");
+        setMessageType('success');
       }
       setTimeout(() => {
         navigate('/categorias');
       }, 2500);
     } catch (error) {
       console.error(error);
-          setMessage("Error al guardar la categoría");
-          setMessageType('error');
+      setMessage("Error al guardar la categoría");
+      setMessageType('error');
       alert('Error al guardar la categoría');
     } finally {
       setLoading(false);
     }
   };
 
-// const handleDeleteConfirmed = async () => {
-//   try {
-//     setLoading(true);
-//     await deleteCategoria(initialData.id);
-//     setMessage("Categoría eliminada con éxito");
-//     setMessageType('success');
-//     navigate('/categorias');
-//   } catch (error) {
-//     console.error('Error al eliminar', error);
-//     setMessage("No se pudo eliminar la categoría");
-//     setMessageType('error');
-//   } finally {
-//     setLoading(false);
-//     setShowDeleteConfirm(false);
-//   }
-// };
-const handleDeleteConfirmed = async () => {
-  try {
-    setLoading(true);
-    await deleteCategoria(initialData.id);
-    
-    setMessage("Categoría eliminada con éxito");
-    setMessageType('success');
-    
-    navigate('/categorias');
-  } catch (error) {
-    console.error('Error al eliminar', error);
+  const handleDeleteConfirmed = async () => {
+    try {
+      setLoading(true);
+      await deleteCategoria(initialData.id);
 
-    const backendMessage = error.response?.data?.message || "No se pudo eliminar la categoría";
-        setMessage(backendMessage);
-    setMessageType('error');
-    setShowDeleteConfirm(false);
-    // setDeleteMessage(backendMessage);
-    // setDeleteMessageType('error');
-    // setMessage(backendMessage);
-    // setMessageType('error');
-    // setDeleteError(backendMessage);
-    // setShowErrorModal(true);
+      setMessage("Categoría eliminada con éxito");
+      setMessageType('success');
 
-  } finally {
-    setLoading(false);
-    // setShowDeleteConfirm(false);
-  }
-};
+      navigate('/categorias');
+    } catch (error) {
+      console.error('Error al eliminar', error);
 
+      const backendMessage = error.response?.data?.message || "No se pudo eliminar la categoría";
+      setMessage(backendMessage);
+      setMessageType('error');
+      setShowDeleteConfirm(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return (
@@ -499,94 +470,87 @@ const handleDeleteConfirmed = async () => {
         </Form.Group>
       )}
 
-  <div className="button-container">
-  <BasicButton
-    type="submit"
-    className="btn-accent-custom mt-3"
-    disabled={loading}
-    size="small"
-  >
-    {loading ? (
-      <>
-        <Spinner animation="border" size="sm" className="me-2" />
-        Guardando...
-      </>
-    ) : isEditMode ? (
-      'Guardar cambios'
-    ) : (
-      'Crear categoría'
-    )}
-  </BasicButton>
+      <div className="button-container">
+        <BasicButton
+          type="submit"
+          className="btn-accent-custom mt-3"
+          disabled={loading}
+          size="small"
+        >
+          {loading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />
+              Guardando...
+            </>
+          ) : isEditMode ? (
+            'Guardar cambios'
+          ) : (
+            'Crear categoría'
+          )}
+        </BasicButton>
 
-  {isEditMode && (
-    <BasicButton
-      type="button"
-      className="btn-tertiary-custom"
-      size="small"
-      onClick={() => setShowDeleteConfirm(true)}
-      disabled={loading}
-    >
-      Eliminar categoría
-    </BasicButton>
-  )}
-</div>
+        {isEditMode && (
+          <BasicButton
+            type="button"
+            className="btn-tertiary-custom"
+            size="small"
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={loading}
+          >
+            Eliminar categoría
+          </BasicButton>
+        )}
+      </div>
 
-{message && (
-  <div className={`ux-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}>
-    <span style={{ whiteSpace: 'pre-line' }}>{message}</span>
-    <button
-      className="btn-close-message"
-      onClick={() => setMessage('')}
-      aria-label="Cerrar mensaje"
-    >
-      ✖
-    </button>
-  </div>
-)}
-
-<Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered>
-  <Modal.Header closeButton>
-    <Modal.Title>Confirmar eliminación</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <p>¿Estás seguro de que deseas eliminar esta categoría?</p>
-  </Modal.Body>
-  <Modal.Footer className="modal-footer">
-    <BasicButton
-      type="button"
-      className="btn-danger-custom me-2"
-      size="small"
-      onClick={handleDeleteConfirmed}
-      disabled={loading}
-    >
-      {loading ? (
-        <>
-          <Spinner animation="border" size="sm" className="me-2" />
-          Eliminando...
-        </>
-      ) : (
-        'Eliminar'
+      {message && (
+        <div className={`ux-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}>
+          <span style={{ whiteSpace: 'pre-line' }}>{message}</span>
+          <button
+            className="btn-close-message"
+            onClick={() => setMessage('')}
+            aria-label="Cerrar mensaje"
+          >
+            ✖
+          </button>
+        </div>
       )}
-    </BasicButton>
-    <BasicButton
-      type="button"
-      className="btn-secondary-custom"
-      size="small"
-      // onClick={() => setShowDeleteConfirm(false)}
-      onClick={() => setShowDeleteConfirm(true)}
-    >
-      Cancelar
-    </BasicButton>
-  </Modal.Footer>
-</Modal>
 
+      <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>¿Estás seguro de que deseas eliminar esta categoría?</p>
+        </Modal.Body>
+        <Modal.Footer className="modal-footer">
+          <BasicButton
+            type="button"
+            className="btn-danger-custom me-2"
+            size="small"
+            onClick={handleDeleteConfirmed}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Eliminando...
+              </>
+            ) : (
+              'Eliminar'
+            )}
+          </BasicButton>
+          <BasicButton
+            type="button"
+            className="btn-secondary-custom"
+            size="small"
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            Cancelar
+          </BasicButton>
+        </Modal.Footer>
+      </Modal>
     </Form>
   );
 }
-
-
-
-
-
 
 export default CategoriaForm;

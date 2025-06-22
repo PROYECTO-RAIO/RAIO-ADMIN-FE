@@ -35,4 +35,3 @@ describe('BasicButton', () => {
     expect(button).toHaveClass('active');
   });
 });
-
