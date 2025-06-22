@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { convertirAMinutos } from './tiempoUtils'; // ajusta la ruta si es otra
+import { convertirAMinutos } from './tiempoUtils';
 
 describe('convertirAMinutos', () => {
   it('convierte minutos correctamente', () => {
