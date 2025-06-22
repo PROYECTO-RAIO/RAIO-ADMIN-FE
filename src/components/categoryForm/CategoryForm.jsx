@@ -76,40 +76,47 @@ function CategoriaForm({ initialData = null }) {
     }
   };
 
-  const validate = () => {
-    const newErrors = {};
+  const validate = (isEditMode) => {
+  const newErrors = {};
+  const today = new Date();
+  const startDate = new Date(formData.fechaInicio);
+  const endDate = new Date(formData.fechaFinal);
 
-    if (!formData.tituloCategoria.trim()) newErrors.tituloCategoria = 'El nombre es obligatorio';
-    if (!formData.autorEmailCategoria.match(/^\S+@\S+\.\S+$/)) newErrors.autorEmailCategoria = 'Email no válido';
-    if (Number(formData.totalReverberaciones) < 0) newErrors.totalReverberaciones = 'Debe ser mayor o igual a 0';
-    if (formData.fechaInicio && isNaN(new Date(formData.fechaInicio).getTime())) {
-      newErrors.fechaInicio = 'Fecha de inicio inválida';
-    }
-    if (formData.fechaFinal && isNaN(new Date(formData.fechaFinal).getTime())) {
-      newErrors.fechaFinal = 'Fecha final inválida';
-    }
-    if (
-      formData.fechaInicio &&
-      formData.fechaFinal &&
-      new Date(formData.fechaFinal) < new Date(formData.fechaInicio)
-    ) {
-      newErrors.fechaFinal = 'La fecha final debe ser posterior a la fecha de inicio';
-    }
+  if (!formData.tituloCategoria.trim()) newErrors.tituloCategoria = 'El nombre es obligatorio';
+  if (!formData.autorEmailCategoria.match(/^\S+@\S+\.\S+$/)) newErrors.autorEmailCategoria = 'Email no válido';
+  if (Number(formData.totalReverberaciones) < 0) newErrors.totalReverberaciones = 'Debe ser mayor o igual a 0';
 
-    const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-    if (formData.archivoUrl && !urlRegex.test(formData.archivoUrl)) {
-      newErrors.archivoUrl = 'URL no válida';
-    }
+  if (formData.fechaInicio && isNaN(startDate.getTime())) {
+    newErrors.fechaInicio = 'Fecha de inicio inválida';
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  if (formData.fechaFinal && isNaN(endDate.getTime())) {
+    newErrors.fechaFinal = 'Fecha final inválida';
+  }
+
+  if (formData.fechaInicio && formData.fechaFinal && endDate < startDate) {
+    newErrors.fechaFinal = 'La fecha final debe ser posterior a la fecha de inicio';
+  }
+
+  if (!isEditMode && formData.fechaInicio && startDate < today) {
+    newErrors.fechaInicio = 'La fecha de inicio no puede ser anterior a hoy';
+  }
+
+  const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
+  if (formData.archivoUrl && !urlRegex.test(formData.archivoUrl)) {
+    newErrors.archivoUrl = 'URL no válida';
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
 
-    if (!validate()) return;
+    if (!validate(isEditMode)) return;
 
     let minutosAleatorios = null;
     if (formData.demora) {
