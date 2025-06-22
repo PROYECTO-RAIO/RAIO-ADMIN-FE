@@ -1,4 +1,4 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getCategorias } from "./../../service/apiService";
 import CategoryCard from "./../../components/card/CategoryCard";
